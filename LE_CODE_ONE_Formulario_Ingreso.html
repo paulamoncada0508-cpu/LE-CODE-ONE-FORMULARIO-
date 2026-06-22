@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMA — Formulario de Ingreso</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #FDF6FA;
+    color: #3D1F2E;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, #F7D9EC 0%, #EEB8D4 50%, #D98CB5 100%);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+  }
+
+  .hero-icon { font-size: 36px; margin-bottom: 12px; }
+
+  .hero h1 {
+    font-size: 26px;
+    font-weight: 600;
+    color: #3D1F2E;
+    margin-bottom: 8px;
+  }
+
+  .hero p {
+    font-size: 14px;
+    color: #7A4060;
+    max-width: 460px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .form-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .block {
+    background: white;
+    border: 1px solid #F0D6E8;
+    border-radius: 18px;
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .block-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #F7EEF4;
+  }
+
+  .block-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #EEB8D4, #C2527A);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .block-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #3D1F2E;
+  }
+
+  .block-sub {
+    font-size: 12px;
+    color: #B47C9A;
+    margin-top: 2px;
+  }
+
+  .field {
+    margin-bottom: 1.25rem;
+  }
+
+  .field:last-child { margin-bottom: 0; }
+
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #5A2E45;
+    margin-bottom: 6px;
+  }
+
+  .field .optional {
+    font-size: 11px;
+    font-weight: 400;
+    color: #C4A0B8;
+    margin-left: 6px;
+  }
+
+  .field .hint {
+    font-size: 11px;
+    color: #B47C9A;
+    margin-top: 5px;
+    line-height: 1.4;
+  }
+
+  input[type="text"],
+  input[type="url"],
+  input[type="email"],
+  select,
+  textarea {
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: #3D1F2E;
+    background: #FDF6FA;
+    border: 1.5px solid #F0D6E8;
+    border-radius: 10px;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+  }
+
+  input[type="text"]:focus,
+  input[type="url"]:focus,
+  input[type="email"]:focus,
+  select:focus,
+  textarea:focus {
+    border-color: #C2527A;
+    background: white;
+  }
+
+  textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C2527A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+
+  .row2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .upload-zone {
+    border: 2px dashed #EEB8D4;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    background: #FFF8FC;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .upload-zone:hover {
+    border-color: #C2527A;
+    background: #FDF0F6;
+  }
+
+  .upload-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .upload-icon { font-size: 24px; margin-bottom: 8px; }
+
+  .upload-zone p {
+    font-size: 13px;
+    color: #B47C9A;
+    line-height: 1.5;
+  }
+
+  .upload-zone strong {
+    color: #C2527A;
+    font-weight: 500;
+  }
+
+  .url-group { display: flex; flex-direction: column; gap: 8px; }
+
+  .url-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .url-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #FDF0F6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .radio-group { display: flex; flex-direction: column; gap: 8px; }
+
+  .check-group { display: flex; flex-direction: column; gap: 8px; }
+
+  .check-opt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1.5px solid #F0D6E8;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: #FDF6FA;
+  }
+
+  .check-opt:hover { border-color: #C2527A; background: #FFF0F6; }
+  .check-opt input { accent-color: #C2527A; width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; }
+  .check-opt span { font-size: 13px; color: #5A2E45; }
+
+  .radio-opt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1.5px solid #F0D6E8;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: #FDF6FA;
+  }
+
+  .radio-opt:hover { border-color: #C2527A; background: #FFF0F6; }
+  .radio-opt input { accent-color: #C2527A; width: 16px; height: 16px; flex-shrink: 0; }
+  .radio-opt span { font-size: 13px; color: #5A2E45; }
+
+  .submit-wrap {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .submit-btn {
+    background: linear-gradient(135deg, #D4537E, #A83060);
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 48px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+
+  .submit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(194, 82, 122, 0.35);
+  }
+
+  .submit-btn:active { transform: scale(0.98); }
+
+  .submit-note {
+    font-size: 12px;
+    color: #B47C9A;
+    margin-top: 12px;
+  }
+
+  .success {
+    display: none;
+    text-align: center;
+    padding: 3rem 2rem;
+    background: white;
+    border: 1px solid #F0D6E8;
+    border-radius: 18px;
+    margin-top: 1.5rem;
+  }
+
+  .success-icon { font-size: 48px; margin-bottom: 16px; }
+  .success h2 { font-size: 20px; font-weight: 600; color: #3D1F2E; margin-bottom: 8px; }
+  .success p { font-size: 14px; color: #B47C9A; line-height: 1.6; }
+
+  @media (max-width: 560px) {
+    .row2 { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 22px; }
+    .form-wrap { padding: 1.5rem 1rem 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-icon">✨</div>
+  <h1>Cuéntanos sobre tu negocio</h1>
+  <p>Esta información nos permite crear una estrategia de marketing personalizada y potenciada con IA para tu negocio.</p>
+</div>
+
+<div class="form-wrap">
+
+  <!-- BLOQUE 1 -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-num">1</div>
+      <div>
+        <div class="block-title">El negocio</div>
+        <div class="block-sub">Cuéntanos qué haces y dónde lo haces</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>¿Cómo se llama tu negocio? <span class="optional">requerido</span></label>
+      <input type="text" placeholder="Ej: ER Studio Nails">
+    </div>
+
+    <div class="field">
+      <label>¿Qué vendes exactamente?</label>
+      <textarea placeholder="Describe tu producto o servicio principal y su precio. Ej: Servicio de uñas a domicilio en acrílico y semipermanente, desde $70.000 COP."></textarea>
+      <div class="hint">Sé específico — precio, formato, qué incluye</div>
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label>¿En qué ciudad operas?</label>
+        <select>
+          <option value="">— Selecciona —</option>
+          <optgroup label="Antioquia">
+            <option>Medellín</option>
+            <option>Envigado</option>
+            <option>Sabaneta</option>
+            <option>Itagüí</option>
+            <option>Bello</option>
+            <option>Rionegro</option>
+            <option>La Ceja</option>
+          </optgroup>
+          <optgroup label="Otras ciudades">
+            <option>Bogotá</option>
+            <option>Cali</option>
+            <option>Barranquilla</option>
+            <option>Cartagena</option>
+            <option>Bucaramanga</option>
+            <option>Pereira</option>
+            <option>Manizales</option>
+            <option>Santa Marta</option>
+            <option>Cúcuta</option>
+            <option>Ibagué</option>
+            <option>Villavicencio</option>
+            <option>Pasto</option>
+          </optgroup>
+          <optgroup label="Internacional">
+            <option>Estados Unidos</option>
+            <option>España</option>
+            <option>México</option>
+            <option>Argentina</option>
+            <option>Chile</option>
+            <option>Otro país</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="field">
+        <label>¿Cómo prestas el servicio?</label>
+        <select>
+          <option value="">— Selecciona —</option>
+          <option>A domicilio</option>
+          <option>En local físico</option>
+          <option>Online / digital</option>
+          <option>Mixto (domicilio + local)</option>
+          <option>Mixto (presencial + online)</option>
+          <option>En eventos o ferias</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>¿Hace cuánto tiempo existe el negocio?</label>
+      <select>
+        <option value="">— Selecciona —</option>
+        <option>Menos de 6 meses</option>
+        <option>6 meses – 1 año</option>
+        <option>1 – 3 años</option>
+        <option>Más de 3 años</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- BLOQUE 2 -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-num">2</div>
+      <div>
+        <div class="block-title">Tu cliente ideal</div>
+        <div class="block-sub">La base de toda la estrategia</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>¿Quién te compra hoy? Descríbelo como persona real</label>
+      <textarea placeholder="Edad, género, qué hace, cómo es su vida. Ej: Mujer entre 28–40 años, trabaja o tiene hijos, vive en Medellín, valora la comodidad y cuida su apariencia."></textarea>
+    </div>
+
+    <div class="field">
+      <label>¿Por qué te compran? ¿Qué problema o deseo les resuelves?</label>
+      <textarea placeholder="Esta es la pregunta más importante. Ej: No tienen tiempo de ir a un salón — quieren verse bien sin salir de casa ni perder media tarde."></textarea>
+    </div>
+
+    <div class="field">
+      <label>¿Por qué crees que te eligen a ti y no a otro?</label>
+      <textarea placeholder="Tu diferencial real — puede ser precio, calidad, experiencia, rapidez, ubicación, confianza..."></textarea>
+    </div>
+  </div>
+
+  <!-- BLOQUE 3 -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-num">3</div>
+      <div>
+        <div class="block-title">Situación comercial actual</div>
+        <div class="block-sub">Cómo está el negocio hoy</div>
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label>¿Cuántos clientes tienes al mes?</label>
+        <input type="text" placeholder="Ej: 30 clientes">
+      </div>
+      <div class="field">
+        <label>Precio promedio por venta</label>
+        <input type="text" placeholder="Ej: $90.000 COP">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>¿Cómo llegan tus clientes hoy? <span class="optional">puedes elegir varias</span></label>
+      <div class="check-group">
+        <label class="check-opt"><input type="checkbox" name="llegada" value="voz"> <span>Voz a voz / referidos</span></label>
+        <label class="check-opt"><input type="checkbox" name="llegada" value="instagram"> <span>Instagram orgánico</span></label>
+        <label class="check-opt"><input type="checkbox" name="llegada" value="tiktok"> <span>TikTok</span></label>
+        <label class="check-opt"><input type="checkbox" name="llegada" value="facebook"> <span>Facebook</span></label>
+        <label class="check-opt"><input type="checkbox" name="llegada" value="google"> <span>Google / Google Maps</span></label>
+        <label class="check-opt"><input type="checkbox" name="llegada" value="pauta"> <span>Pauta pagada</span></label>
+        <label class="check-opt"><input type="checkbox" name="llegada" value="whatsapp"> <span>WhatsApp</span></label>
+        <label class="check-opt"><input type="checkbox" name="llegada" value="otro"> <span>Otro</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>¿Cuál es tu mayor problema de ventas ahora mismo?</label>
+      <textarea placeholder="Lo que más te frena para crecer. Ej: No sé cómo conseguir clientes nuevos, solo llegan por recomendación."></textarea>
+    </div>
+
+    <div class="field">
+      <label>¿Has hecho pauta pagada antes?</label>
+      <div class="radio-group">
+        <label class="radio-opt"><input type="radio" name="pauta" value="no"> <span>No, nunca he pautado</span></label>
+        <label class="radio-opt"><input type="radio" name="pauta" value="si_mal"> <span>Sí, pero no funcionó bien</span></label>
+        <label class="radio-opt"><input type="radio" name="pauta" value="si_bien"> <span>Sí, con buenos resultados</span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOQUE 4 -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-num">4</div>
+      <div>
+        <div class="block-title">Presencia digital</div>
+        <div class="block-sub">Pega los links de tus canales para que los analicemos</div>
+      </div>
+    </div>
+
+    <div class="url-group">
+      <div class="url-row">
+        <div class="url-icon">📸</div>
+        <input type="url" placeholder="Instagram — https://instagram.com/tu_cuenta">
+      </div>
+      <div class="url-row">
+        <div class="url-icon">🎵</div>
+        <input type="url" placeholder="TikTok — https://tiktok.com/@tu_cuenta">
+      </div>
+      <div class="url-row">
+        <div class="url-icon">👥</div>
+        <input type="url" placeholder="Facebook — https://facebook.com/tu_pagina">
+      </div>
+      <div class="url-row">
+        <div class="url-icon">🗺️</div>
+        <input type="url" placeholder="Google Business — link de tu perfil en Google Maps">
+      </div>
+      <div class="url-row">
+        <div class="url-icon">🌐</div>
+        <input type="url" placeholder="Sitio web — https://tu-sitio.com">
+      </div>
+      <div class="url-row">
+        <div class="url-icon">➕</div>
+        <input type="url" placeholder="Otro canal — pega el link aquí">
+      </div>
+    </div>
+
+    <div class="field" style="margin-top:1.25rem">
+      <label>¿Usas WhatsApp Business?</label>
+      <div class="radio-group">
+        <label class="radio-opt"><input type="radio" name="wp" value="si"> <span>Sí, tengo WhatsApp Business activo</span></label>
+        <label class="radio-opt"><input type="radio" name="wp" value="personal"> <span>Solo WhatsApp personal</span></label>
+        <label class="radio-opt"><input type="radio" name="wp" value="no"> <span>No uso WhatsApp para el negocio</span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOQUE 5 -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-num">5</div>
+      <div>
+        <div class="block-title">Competencia</div>
+        <div class="block-sub">Quién más vende lo mismo que tú</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>¿Quiénes son tus 2–3 competidores principales?</label>
+      <textarea placeholder="Nombres, cuentas de Instagram o negocios similares que conozcas. Ej: Studio X en Medellín, @nailsby_ana..."></textarea>
+    </div>
+
+    <div class="url-group">
+      <div class="field" style="margin-bottom:0">
+        <label>Links de competidores <span class="optional">opcional</span></label>
+      </div>
+      <div class="url-row">
+        <div class="url-icon">🔍</div>
+        <input type="url" placeholder="Competidor 1 — link de Instagram o web">
+      </div>
+      <div class="url-row">
+        <div class="url-icon">🔍</div>
+        <input type="url" placeholder="Competidor 2 — link de Instagram o web">
+      </div>
+      <div class="url-row">
+        <div class="url-icon">🔍</div>
+        <input type="url" placeholder="Competidor 3 — link de Instagram o web">
+      </div>
+    </div>
+
+    <div class="field" style="margin-top:1.25rem">
+      <label>¿En qué sientes que ellos te llevan ventaja?</label>
+      <textarea placeholder="Más seguidores, mejor precio, más conocidos, mejor ubicación..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>¿En qué sientes que tú eres mejor que ellos?</label>
+      <textarea placeholder="Calidad, precio, experiencia, atención, resultados, confianza..."></textarea>
+    </div>
+  </div>
+
+  <!-- BLOQUE 6 -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-num">6</div>
+      <div>
+        <div class="block-title">Recursos y objetivos</div>
+        <div class="block-sub">Con qué cuentas y a dónde quieres llegar</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>¿Cuánto puedes invertir mensualmente en publicidad?</label>
+      <select>
+        <option value="">— Selecciona —</option>
+        <option>Menos de $200.000 COP</option>
+        <option>$200.000 – $500.000 COP</option>
+        <option>$500.000 – $1.000.000 COP</option>
+        <option>Más de $1.000.000 COP</option>
+        <option>Aún no está definido</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>¿Puedes grabar videos cortos para redes?</label>
+      <div class="radio-group">
+        <label class="radio-opt"><input type="radio" name="video" value="si"> <span>Sí, puedo grabar sin problema</span></label>
+        <label class="radio-opt"><input type="radio" name="video" value="ayuda"> <span>Con ayuda o guión sí podría</span></label>
+        <label class="radio-opt"><input type="radio" name="video" value="no"> <span>Prefiero que todo sea automatizado</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>¿Tienes fotos o videos de resultados de clientes?</label>
+      <div class="radio-group">
+        <label class="radio-opt"><input type="radio" name="contenido" value="si"> <span>Sí, tengo bastante material</span></label>
+        <label class="radio-opt"><input type="radio" name="contenido" value="poco"> <span>Tengo algo pero poco</span></label>
+        <label class="radio-opt"><input type="radio" name="contenido" value="no"> <span>No tengo nada todavía</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>¿Qué quieres lograr en los próximos 3 meses?</label>
+      <textarea placeholder="Sé específico, si puedes con número. Ej: Llenar mi agenda completa todas las semanas, pasar de 20 a 50 clientes al mes, lanzar un nuevo servicio..."></textarea>
+    </div>
+  </div>
+
+  <!-- BLOQUE 7 -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-num">7</div>
+      <div>
+        <div class="block-title">Branding e identidad</div>
+        <div class="block-sub">Cómo quieres que se vea y sienta tu marca</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>¿Tienes logo?</label>
+      <div class="radio-group">
+        <label class="radio-opt"><input type="radio" name="logo" value="si"> <span>Sí, tengo logo definido</span></label>
+        <label class="radio-opt"><input type="radio" name="logo" value="no"> <span>No, necesito crearlo</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Sube tu logo aquí <span class="optional">si tienes</span></label>
+      <div class="upload-zone">
+        <input type="file" accept="image/*">
+        <div class="upload-icon">🖼️</div>
+        <p><strong>Haz clic o arrastra tu logo aquí</strong><br>PNG, JPG o SVG · máx 5MB</p>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>¿Tienes colores o estilo visual definido?</label>
+      <textarea placeholder="Si sí, descríbelos. Ej: Rosa palo y dorado, minimalista. O: Negro y blanco, elegante. Si no tienes, déjalo en blanco."></textarea>
+    </div>
+
+    <div class="field">
+      <label>¿Cómo quieres que la gente sienta tu marca? Escribe 3 palabras</label>
+      <input type="text" placeholder="Ej: elegante, confiable, femenina — o: fresca, divertida, moderna">
+    </div>
+
+    <div class="field">
+      <label>Sube hasta 3 imágenes de referencia visual <span class="optional">opcional</span></label>
+      <div class="upload-zone">
+        <input type="file" accept="image/*" multiple>
+        <div class="upload-icon">✨</div>
+        <p><strong>Haz clic o arrastra imágenes aquí</strong><br>Cuentas de Instagram, diseños o marcas que te inspiren<br>Hasta 3 imágenes · PNG o JPG</p>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>O pega links de referencia visual <span class="optional">opcional</span></label>
+      <div class="url-group">
+        <div class="url-row">
+          <div class="url-icon">💅</div>
+          <input type="url" placeholder="Link de cuenta o marca que te inspire — 1">
+        </div>
+        <div class="url-row">
+          <div class="url-icon">💅</div>
+          <input type="url" placeholder="Link de cuenta o marca que te inspire — 2">
+        </div>
+        <div class="url-row">
+          <div class="url-icon">💅</div>
+          <input type="url" placeholder="Link de cuenta o marca que te inspire — 3">
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>¿Hay algo que definitivamente NO quieres en tu marketing?</label>
+      <textarea placeholder="Estilos, temas, tonos o tipos de contenido que no van con tu marca..."></textarea>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-wrap">
+    <button class="submit-btn" onclick="enviar()">Enviar mi información ✨</button>
+    <p class="submit-note">Recibirás tu estrategia personalizada en 48 horas</p>
+  </div>
+
+  <div class="success" id="success">
+    <div class="success-icon">🎉</div>
+    <h2>¡Listo! Recibimos tu información</h2>
+    <p>En las próximas 48 horas tendrás tu estrategia de marketing completa y personalizada. Nos pondremos en contacto contigo pronto.</p>
+  </div>
+
+</div>
+
+<script>
+  function enviar() {
+    var campos = document.querySelectorAll('input[type="text"], input[type="url"], textarea, select');
+    var primeroCampo = document.querySelector('input[type="text"]');
+    if (primeroCampo && primeroCampo.value.trim() === '') {
+      primeroCampo.focus();
+      primeroCampo.style.borderColor = '#C2527A';
+      setTimeout(function() { primeroCampo.style.borderColor = ''; }, 2000);
+      return;
+    }
+    document.querySelector('.submit-wrap').style.display = 'none';
+    document.getElementById('success').style.display = 'block';
+    document.getElementById('success').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  document.querySelectorAll('.upload-zone').forEach(function(zone) {
+    var input = zone.querySelector('input[type="file"]');
+    input.addEventListener('change', function() {
+      if (this.files.length > 0) {
+        var names = Array.from(this.files).map(function(f) { return f.name; }).join(', ');
+        zone.querySelector('p').innerHTML = '<strong style="color:#2E7D54">✓ ' + this.files.length + ' archivo(s) seleccionado(s)</strong><br><span style="font-size:11px;color:#B47C9A">' + names + '</span>';
+        zone.style.borderColor = '#2E7D54';
+        zone.style.background = '#F0FAF5';
+      }
+    });
+  });
+</script>
+</body>
+</html>
