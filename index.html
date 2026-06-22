@@ -700,18 +700,99 @@
 </div>
 
 <script>
+  const WEBHOOK_URL = 'https://q3uhvgat.rpcld.co/webhook/le-code-one-webhook';
+
+  function obtenerDatosFormulario() {
+    var data = {};
+    
+    function valByPlaceholder(ph) {
+      var el = document.querySelector('[placeholder="' + ph + '"]');
+      return el ? el.value : '';
+    }
+    
+    data.nombre_negocio = valByPlaceholder("Ej: ER Studio Nails");
+    data.que_vende = valByPlaceholder("Describe tu producto o servicio principal y su precio. Ej: Servicio de uñas a domicilio en acrílico y semipermanente, desde $70.000 COP.");
+    data.cliente_ideal = valByPlaceholder("Edad, género, qué hace, cómo es su vida. Ej: Mujer entre 28–40 años, trabaja o tiene hijos, vive en Medellín, valora la comodidad y cuida su apariencia.");
+    data.problema_deseo_resuelve = valByPlaceholder("Esta es la pregunta más importante. Ej: No tienen tiempo de ir a un salón — quieren verse bien sin salir de casa ni perder media tarde.");
+    data.por_que_eligen = valByPlaceholder("Tu diferencial real — puede ser precio, calidad, experiencia, rapidez, ubicación, confianza...");
+    data.clientes_al_mes = valByPlaceholder("Ej: 30 clientes");
+    data.precio_promedio = valByPlaceholder("Ej: $90.000 COP");
+    data.problema_ventas = valByPlaceholder("Lo que más te frena para crecer. Ej: No sé cómo conseguir clientes nuevos, solo llegan por recomendación.");
+    
+    data.instagram = valByPlaceholder("Instagram — https://instagram.com/tu_cuenta");
+    data.tiktok = valByPlaceholder("TikTok — https://tiktok.com/@tu_cuenta");
+    data.facebook = valByPlaceholder("Facebook — https://facebook.com/tu_pagina");
+    data.google_business = valByPlaceholder("Google Business — link de tu perfil en Google Maps");
+    data.web = valByPlaceholder("Sitio web — https://tu-sitio.com");
+    data.otro_canal = valByPlaceholder("Otro canal — pega el link aquí");
+    
+    data.competidores = valByPlaceholder("Nombres, cuentas de Instagram o negocios similares que conozcas. Ej: Studio X en Medellín, @nailsby_ana...");
+    data.link_competidor_1 = valByPlaceholder("Competidor 1 — link de Instagram o web");
+    data.link_competidor_2 = valByPlaceholder("Competidor 2 — link de Instagram o web");
+    data.link_competidor_3 = valByPlaceholder("Competidor 3 — link de Instagram o web");
+    data.ventaja_competidores = valByPlaceholder("Más seguidores, mejor precio, más conocidos, mejor ubicación...");
+    data.ventaja_propia = valByPlaceholder("Calidad, precio, experiencia, atención, resultados, confianza...");
+    
+    data.objetivo_3_meses = valByPlaceholder("Sé específico, si puedes con número. Ej: Llenar mi agenda completa todas las semanas, pasar de 20 a 50 clientes al mes, lanzar un nuevo servicio...");
+    data.estilo_visual = valByPlaceholder("Si sí, descríbelos. Ej: Rosa palo y dorado, minimalista. O: Negro y blanco, elegante. Si no tienes, déjalo en blanco.");
+    data.palabras_marca = valByPlaceholder("Ej: elegante, confiable, femenina — o: fresca, divertida, moderna");
+    
+    data.link_referencia_1 = valByPlaceholder("Link de cuenta o marca que te inspire — 1");
+    data.link_referencia_2 = valByPlaceholder("Link de cuenta o marca que te inspire — 2");
+    data.link_referencia_3 = valByPlaceholder("Link de cuenta o marca que te inspire — 3");
+    
+    data.no_quiere_marketing = valByPlaceholder("Estilos, temas, tonos o tipos de contenido que no van con tu marca...");
+    
+    var selects = document.querySelectorAll('select');
+    data.ciudad = selects[0] ? selects[0].value : '';
+    data.como_presta_servicio = selects[1] ? selects[1].value : '';
+    data.tiempo_existencia = selects[2] ? selects[2].value : '';
+    data.inversion_publicidad = selects[3] ? selects[3].value : '';
+    
+    var checkboxes = document.querySelectorAll('input[name="llegada"]:checked');
+    var llegada = [];
+    checkboxes.forEach(function(cb) { llegada.push(cb.value); });
+    data.como_llegan_hoy = llegada;
+    
+    function getRadioVal(name) {
+      var el = document.querySelector('input[name="' + name + '"]:checked');
+      return el ? el.value : '';
+    }
+    data.hizo_pauta_antes = getRadioVal("pauta");
+    data.usa_whatsapp_business = getRadioVal("wp");
+    data.graba_videos = getRadioVal("video");
+    data.tiene_material = getRadioVal("contenido");
+    data.tiene_logo = getRadioVal("logo");
+    
+    return data;
+  }
+
   function enviar() {
-    var campos = document.querySelectorAll('input[type="text"], input[type="url"], textarea, select');
-    var primeroCampo = document.querySelector('input[type="text"]');
+    var primeroCampo = document.querySelector('input[placeholder="Ej: ER Studio Nails"]');
     if (primeroCampo && primeroCampo.value.trim() === '') {
       primeroCampo.focus();
       primeroCampo.style.borderColor = '#C2527A';
       setTimeout(function() { primeroCampo.style.borderColor = ''; }, 2000);
       return;
     }
+    
+    var data = obtenerDatosFormulario();
+    
     document.querySelector('.submit-wrap').style.display = 'none';
     document.getElementById('success').style.display = 'block';
     document.getElementById('success').scrollIntoView({ behavior: 'smooth' });
+    
+    if (WEBHOOK_URL && WEBHOOK_URL !== 'YOUR_WEBHOOK_URL_HERE') {
+      fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(function(response) { console.log('Datos enviados con éxito:', response); })
+      .catch(function(error) { console.error('Error al enviar datos:', error); });
+    }
   }
 
   document.querySelectorAll('.upload-zone').forEach(function(zone) {
