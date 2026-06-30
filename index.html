@@ -486,7 +486,7 @@ function buildP5(){
   preguntas.forEach(p => {
     html += '<div class="field"><label>' + p.label + '</label>';
     if(p.tipo === 'chips'){
-      html += '<div class="chips">';
+      html += '<div class="chips" id="' + p.id + '">';
       p.opciones.forEach(o => {
         html += '<div class="chip" onclick="toggleChip(this)">' + o + '</div>';
       });
@@ -499,30 +499,52 @@ function buildP5(){
   document.getElementById('p5fields').innerHTML = html;
 }
 
-function enviar(){
-  const datos = {
-    negocio: document.getElementById('f-nombre').value,
-    contacto: document.getElementById('f-contacto').value,
-    whatsapp: document.getElementById('f-whatsapp').value,
-    email: document.getElementById('f-email').value,
-    ciudad: document.getElementById('f-ciudad').value,
-    instagram: document.getElementById('f-instagram').value,
-    facebook: document.getElementById('f-facebook').value,
-    web: document.getElementById('f-web').value,
-    tiktok: document.getElementById('f-tiktok').value,
-    youtube: document.getElementById('f-youtube').value,
-    otrosCanales: document.getElementById('f-otroscanales').value,
-    oferta: document.getElementById('f-oferta').value,
-    clienteIdeal: document.getElementById('f-cliente').value,
-    problema: document.getElementById('f-problema').value,
-    diferencial: document.getElementById('f-diferencial').value,
-    ticketPromedio: document.getElementById('f-ticket').value,
-    canalesCliente: Array.from(document.querySelectorAll('#chips-canal .chip.sel')).map(c=>c.textContent),
-    categoria: catSeleccionada >= 0 ? catNombres[catSeleccionada] : '',
-    extra: document.getElementById('f-extra').value
-  };
+function getVal(id){ const el = document.getElementById(id); return el ? el.value : ''; }
+function getChips(id){ const el = document.getElementById(id); return el ? Array.from(el.querySelectorAll('.chip.sel')).map(c=>c.textContent) : []; }
 
-  console.log('Datos del formulario:', datos);
+function enviar(){
+  const operacion = {};
+  if(catSeleccionada === 0){
+    operacion.citas_dia        = getVal('p5-citas-dia');
+    operacion.tiempo_respuesta = getVal('p5-tiempo-respuesta');
+    operacion.problema         = getChips('p5-problema-citas');
+    operacion.como_agenda      = getVal('p5-como-agenda');
+    operacion.herramienta      = getVal('p5-herramienta-citas');
+  } else if(catSeleccionada === 1){
+    operacion.pedidos_dia  = getVal('p5-pedidos-dia');
+    operacion.problema     = getChips('p5-problema-pedidos');
+    operacion.plataforma   = getVal('p5-plataforma');
+    operacion.confirmacion = getVal('p5-confirmacion');
+  } else if(catSeleccionada === 2){
+    operacion.leads_mes     = getVal('p5-leads-mes');
+    operacion.tiempo_lead   = getVal('p5-tiempo-lead');
+    operacion.problema      = getChips('p5-problema-ticket');
+    operacion.crm           = getVal('p5-crm');
+    operacion.proceso_venta = getVal('p5-proceso-venta');
+  }
+
+  const datos = {
+    negocio:       document.getElementById('f-nombre').value,
+    contacto:      document.getElementById('f-contacto').value,
+    whatsapp:      document.getElementById('f-whatsapp').value,
+    email:         document.getElementById('f-email').value,
+    ciudad:        document.getElementById('f-ciudad').value,
+    instagram:     document.getElementById('f-instagram').value,
+    facebook:      document.getElementById('f-facebook').value,
+    web:           document.getElementById('f-web').value,
+    tiktok:        document.getElementById('f-tiktok').value,
+    youtube:       document.getElementById('f-youtube').value,
+    otrosCanales:  document.getElementById('f-otroscanales').value,
+    oferta:        document.getElementById('f-oferta').value,
+    clienteIdeal:  document.getElementById('f-cliente').value,
+    problema:      document.getElementById('f-problema').value,
+    diferencial:   document.getElementById('f-diferencial').value,
+    ticketPromedio:document.getElementById('f-ticket').value,
+    canalesCliente:Array.from(document.querySelectorAll('#chips-canal .chip.sel')).map(c=>c.textContent),
+    categoria:     catSeleccionada >= 0 ? catNombres[catSeleccionada] : '',
+    operacion:     operacion,
+    extra:         document.getElementById('f-extra').value
+  };
 
   document.getElementById('mainCard').innerHTML = `
     <div class="success">
@@ -538,6 +560,12 @@ function enviar(){
   document.getElementById('progFill').style.width = '100%';
   document.getElementById('progLabel').textContent = '¡Completado!';
   window.scrollTo({top:0, behavior:'smooth'});
+
+  fetch('https://q3uhvgat.rpcld.co/webhook/le-code-one-diagnostico', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(datos)
+  }).catch(err => console.error('Error enviando diagnóstico:', err));
 }
 </script>
 
