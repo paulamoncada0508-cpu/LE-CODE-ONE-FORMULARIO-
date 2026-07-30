@@ -152,6 +152,30 @@
   }
   .cat-ex.visible{display:block;}
 
+  /* SERVICIOS */
+  .servicio-row{display:flex;gap:8px;margin-bottom:10px;}
+  .servicio-row input{
+    flex:1;
+    padding:11px 14px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:var(--bg);
+    color:var(--text);
+    font-size:14px;
+    font-family:var(--sans);
+    outline:none;
+  }
+  .servicio-row input:focus{border-color:var(--rosa);}
+  .add-link{
+    font-size:13px;
+    color:var(--rosa);
+    cursor:pointer;
+    margin:-4px 0 20px;
+    font-weight:500;
+    user-select:none;
+  }
+  .add-link:hover{color:var(--rosa-dark);text-decoration:underline;}
+
   /* DIVIDER */
   hr.div{border:none;border-top:1px solid var(--border);margin:20px 0;}
 
@@ -248,7 +272,7 @@
   <div class="screen active" id="s0">
     <div class="screen-eyebrow">paso 1 de 6 — datos básicos</div>
     <div class="screen-title">Cuéntanos sobre tu negocio</div>
-    <div class="screen-sub">Solo toma 5 minutos. Al final recibes tu diagnóstico gratis por WhatsApp.</div>
+    <div class="screen-sub">Solo toma 5 minutos. Al final recibes tu diagnóstico gratis por correo.</div>
 
     <div class="field">
       <label>Nombre del negocio *</label>
@@ -261,11 +285,11 @@
     <div class="field">
       <label>WhatsApp *</label>
       <input type="tel" id="f-whatsapp" placeholder="+57 300 123 4567">
-      <div class="hint">Aquí te enviamos tu diagnóstico</div>
     </div>
     <div class="field">
-      <label>Correo electrónico <span class="opt">opcional</span></label>
+      <label>Correo electrónico *</label>
       <input type="email" id="f-email" placeholder="tu@email.com">
+      <div class="hint">Aquí te enviamos tu diagnóstico</div>
     </div>
     <div class="field">
       <label>Ciudad *</label>
@@ -315,6 +339,10 @@
       <input type="text" id="f-oferta" placeholder="Ej: extensiones de pestañas desde $80.000">
       <div class="hint">Una frase es suficiente</div>
     </div>
+
+    <div class="sec-label">Servicios y precios</div>
+    <div id="servicios-list"></div>
+    <div class="add-link" onclick="agregarServicio()">+ Agregar otro servicio</div>
 
     <button class="btn-next" onclick="goTo(2)">Siguiente →</button>
     <button class="btn-back" onclick="goTo(0)">← Atrás</button>
@@ -410,7 +438,7 @@
 
     <div class="confirm-box">
       <div class="confirm-box-title">Tu diagnóstico se genera en minutos</div>
-      <p>Lo recibirás por WhatsApp sin costo y sin compromiso. Nuestro equipo lo revisa y te contacta si necesita algún detalle adicional.</p>
+      <p>Lo recibirás por correo sin costo y sin compromiso. Nuestro equipo lo revisa y te contacta si necesita algún detalle adicional.</p>
     </div>
 
     <button class="btn-next" onclick="enviar()">Enviar y recibir mi diagnóstico →</button>
@@ -457,6 +485,15 @@ const preguntasPorCategoria = [
   ]
 ];
 
+const preguntasProfit = [
+  {tipo:'input', id:'p5-profit-procesos', label:'¿Qué tareas haces a mano, una y otra vez, en tu negocio?', placeholder:'Ej: agendar citas, responder los mismos mensajes, armar cotizaciones...'},
+  {tipo:'input', id:'p5-profit-respuestas', label:'¿Qué tan rápido respondes cuando un cliente te escribe? ¿Y fuera de horario?', placeholder:'Ej: casi de inmediato en horario, nada fuera de horario...'},
+  {tipo:'input', id:'p5-profit-oportunidades', label:'¿Se te han ido clientes o leads por no responder a tiempo o no dar seguimiento?', placeholder:'Ej: sí, varios al mes; no estoy segura...'},
+  {tipo:'input', id:'p5-profit-frustraciones', label:'¿Qué es lo que más te frustra de cómo manejas tu negocio hoy?', placeholder:'Ej: perder tiempo respondiendo lo mismo, desorganización...'},
+  {tipo:'input', id:'p5-profit-tiempo', label:'¿Cuántas horas a la semana le dedicas a tareas manuales/repetitivas?', placeholder:'Ej: 10 horas a la semana'},
+  {tipo:'input', id:'p5-profit-tecnologia', label:'¿Qué usas hoy para manejar todo esto?', placeholder:'Ej: cuaderno, WhatsApp suelto, Excel, algún CRM, nada...'},
+];
+
 function goTo(n){
   document.querySelectorAll('.screen').forEach((s,i)=>s.classList.toggle('active',i===n));
   const pct = ((n+1)/6*100).toFixed(0);
@@ -481,7 +518,7 @@ function selectCat(i, el){
 
 function buildP5(){
   if(catSeleccionada < 0){ catSeleccionada = 0; }
-  const preguntas = preguntasPorCategoria[catSeleccionada];
+  const preguntas = preguntasPorCategoria[catSeleccionada].concat(preguntasProfit);
   let html = '';
   preguntas.forEach(p => {
     html += '<div class="field"><label>' + p.label + '</label>';
@@ -501,6 +538,22 @@ function buildP5(){
 
 function getVal(id){ const el = document.getElementById(id); return el ? el.value : ''; }
 function getChips(id){ const el = document.getElementById(id); return el ? Array.from(el.querySelectorAll('.chip.sel')).map(c=>c.textContent) : []; }
+
+function agregarServicio(){
+  const row = document.createElement('div');
+  row.className = 'servicio-row';
+  row.innerHTML = '<input type="text" class="servicio-nombre" placeholder="Ej: Extensiones de pestañas clásicas">' +
+                   '<input type="text" class="servicio-precio" placeholder="Ej: $80.000">';
+  document.getElementById('servicios-list').appendChild(row);
+}
+function getServicios(){
+  return Array.from(document.querySelectorAll('.servicio-row')).map(row => ({
+    servicio: row.querySelector('.servicio-nombre').value,
+    precio: row.querySelector('.servicio-precio').value
+  })).filter(s => s.servicio || s.precio);
+}
+agregarServicio();
+agregarServicio();
 
 function enviar(){
   const operacion = {};
@@ -523,6 +576,15 @@ function enviar(){
     operacion.proceso_venta = getVal('p5-proceso-venta');
   }
 
+  const profit = {
+    procesos_repetitivos:   getVal('p5-profit-procesos'),
+    respuestas:             getVal('p5-profit-respuestas'),
+    oportunidades_perdidas: getVal('p5-profit-oportunidades'),
+    frustraciones:          getVal('p5-profit-frustraciones'),
+    inversion_tiempo:       getVal('p5-profit-tiempo'),
+    tecnologia_actual:      getVal('p5-profit-tecnologia')
+  };
+
   const datos = {
     negocio:       document.getElementById('f-nombre').value,
     contacto:      document.getElementById('f-contacto').value,
@@ -536,6 +598,7 @@ function enviar(){
     youtube:       document.getElementById('f-youtube').value,
     otrosCanales:  document.getElementById('f-otroscanales').value,
     oferta:        document.getElementById('f-oferta').value,
+    servicios:     getServicios(),
     clienteIdeal:  document.getElementById('f-cliente').value,
     problema:      document.getElementById('f-problema').value,
     diferencial:   document.getElementById('f-diferencial').value,
@@ -543,6 +606,7 @@ function enviar(){
     canalesCliente:Array.from(document.querySelectorAll('#chips-canal .chip.sel')).map(c=>c.textContent),
     categoria:     catSeleccionada >= 0 ? catNombres[catSeleccionada] : '',
     operacion:     operacion,
+    profit:        profit,
     extra:         document.getElementById('f-extra').value
   };
 
@@ -553,7 +617,7 @@ function enviar(){
       <div class="success-sub">
         Estamos analizando tu negocio.<br>
         En los próximos minutos recibirás tu diagnóstico<br>
-        completo por WhatsApp.<br><br>
+        completo por correo.<br><br>
         <span style="color:var(--rosa);font-weight:500;">LE CODE ONE · Marketing con IA</span>
       </div>
     </div>`;
