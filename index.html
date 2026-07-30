@@ -175,6 +175,20 @@
     user-select:none;
   }
   .add-link:hover{color:var(--rosa-dark);text-decoration:underline;}
+  .lista-row{margin-bottom:8px;}
+  .lista-row input{
+    width:100%;
+    padding:11px 14px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:var(--bg);
+    color:var(--text);
+    font-size:14px;
+    font-family:var(--sans);
+    outline:none;
+  }
+  .lista-row input:focus{border-color:var(--rosa);}
+  .chip-hint{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.4;}
 
   /* DIVIDER */
   hr.div{border:none;border-top:1px solid var(--border);margin:20px 0;}
@@ -375,12 +389,17 @@
       <div class="chips" id="chips-canal">
         <div class="chip" onclick="toggleChip(this)">Instagram</div>
         <div class="chip" onclick="toggleChip(this)">Referidos</div>
+        <div class="chip" onclick="toggleChip(this)">Voz a voz</div>
         <div class="chip" onclick="toggleChip(this)">Facebook</div>
         <div class="chip" onclick="toggleChip(this)">Google</div>
         <div class="chip" onclick="toggleChip(this)">TikTok</div>
         <div class="chip" onclick="toggleChip(this)">WhatsApp</div>
-        <div class="chip" onclick="toggleChip(this)">Otro</div>
+        <div class="chip" onclick="toggleChip(this);toggleOtroCanal(this)">Otro</div>
       </div>
+    </div>
+    <div class="field" id="canal-otro-wrap" style="display:none;">
+      <label>¿Cuál?</label>
+      <input type="text" id="f-canal-otro" placeholder="Ej: eventos, alianzas, publicidad pagada...">
     </div>
 
     <button class="btn-next" onclick="goTo(3)">Siguiente →</button>
@@ -397,6 +416,7 @@
       <div class="chip" onclick="selectCat(0,this)">Servicios con cita o agenda</div>
       <div class="chip" onclick="selectCat(1,this)">Venta de productos o pedidos</div>
       <div class="chip" onclick="selectCat(2,this)">Servicios de alto valor / consultivos</div>
+      <div class="chip" onclick="selectCat(3,this)">Otro / Automatización Personalizada</div>
     </div>
 
     <div class="cat-ex" id="catEx"></div>
@@ -453,40 +473,48 @@ let catSeleccionada = -1;
 const catNombres = [
   'Servicios con cita o agenda',
   'Venta de productos o pedidos',
-  'Servicios de alto valor / consultivos'
+  'Servicios de alto valor / consultivos',
+  'Otro / Automatización Personalizada'
 ];
 
 const catEjemplos = [
   'Coaches, mentores, spas, salones de belleza, consultorios médicos y dentales, gimnasios, inmobiliarias (visitas a propiedades).',
   'Tiendas online (Shopify, WooCommerce, Instagram), restaurantes con delivery, hoteles y alojamientos.',
-  'Agencias de marketing, academias online, despachos legales, consultores de negocios, inmobiliarias (prospección de clientes).'
+  'Agencias de marketing, academias online, despachos legales, consultores de negocios, inmobiliarias (prospección de clientes).',
+  'Profesionales independientes, freelancers, o cualquier negocio o trabajo que no encaje en las categorías anteriores y quiera agilizar sus tareas.'
 ];
 
 const preguntasPorCategoria = [
   [
     {tipo:'input', id:'p5-citas-dia', label:'¿Cuántas citas o mensajes recibes al día aproximadamente?', placeholder:'Ej: 20 mensajes, 8 citas al día'},
     {tipo:'input', id:'p5-tiempo-respuesta', label:'¿Cuánto tiempo tardas en responder un mensaje nuevo?', placeholder:'Ej: 2 horas, al final del día, de inmediato...'},
-    {tipo:'chips', id:'p5-problema-citas', label:'¿Cuál es tu mayor problema hoy?', opciones:['No contesto a tiempo','Muchos no-show','Sin seguimiento post-cita','Agenda desorganizada','Clientes que no regresan','Otro']},
+    {tipo:'chips', id:'p5-problema-citas', label:'¿Cuál es tu mayor problema hoy?', hint:'Puedes elegir varias', opciones:['No contesto a tiempo','Muchos no-show','Sin seguimiento post-cita','Agenda desorganizada','Clientes que no regresan','Otro']},
     {tipo:'input', id:'p5-como-agenda', label:'¿Cómo agendas las citas actualmente?', placeholder:'Ej: WhatsApp manual, llamadas telefónicas, calendario Google...'},
     {tipo:'input', id:'p5-herramienta-citas', label:'¿Usas alguna herramienta para gestionar citas? ', placeholder:'Ej: Calendly, Google Calendar, Excel, ninguna...'},
   ],
   [
     {tipo:'input', id:'p5-pedidos-dia', label:'¿Cuántos pedidos o reservas recibes al día aproximadamente?', placeholder:'Ej: 15 pedidos diarios'},
-    {tipo:'chips', id:'p5-problema-pedidos', label:'¿Cuál es tu mayor problema hoy?', opciones:['Carritos abandonados','Seguimiento de envío','Sin reseñas post-venta','Comunicación con el cliente','Devoluciones y cambios','Otro']},
+    {tipo:'chips', id:'p5-problema-pedidos', label:'¿Cuál es tu mayor problema hoy?', hint:'Puedes elegir varias', opciones:['Carritos abandonados','Seguimiento de envío','Sin reseñas post-venta','Comunicación con el cliente','Devoluciones y cambios','Otro']},
     {tipo:'input', id:'p5-plataforma', label:'¿Qué plataforma usas para vender?', placeholder:'Ej: Shopify, WooCommerce, WhatsApp, Instagram, presencial...'},
     {tipo:'input', id:'p5-confirmacion', label:'¿Cómo confirmas los pedidos actualmente?', placeholder:'Ej: mensaje manual, automático, llamada...'},
   ],
   [
     {tipo:'input', id:'p5-leads-mes', label:'¿Cuántos leads o prospectos recibes al mes aproximadamente?', placeholder:'Ej: 30 leads por mes'},
     {tipo:'input', id:'p5-tiempo-lead', label:'¿Cuánto tiempo tardas en responder un lead nuevo?', placeholder:'Ej: 1 día, 2 horas, varios días...'},
-    {tipo:'chips', id:'p5-problema-ticket', label:'¿Cuál es tu mayor problema hoy?', opciones:['No califico leads a tiempo','Sin seguimiento constante','Reportes y documentos manuales','Proceso de venta muy largo','Sin CRM organizado','Otro']},
+    {tipo:'chips', id:'p5-problema-ticket', label:'¿Cuál es tu mayor problema hoy?', hint:'Puedes elegir varias', opciones:['No califico leads a tiempo','Sin seguimiento constante','Reportes y documentos manuales','Proceso de venta muy largo','Sin CRM organizado','Otro']},
     {tipo:'input', id:'p5-crm', label:'¿Tienes algún CRM o herramienta de seguimiento?', placeholder:'Ej: HubSpot, Pipedrive, Excel, ninguno todavía...'},
     {tipo:'input', id:'p5-proceso-venta', label:'¿Cuánto dura tu proceso de venta desde el primer contacto hasta el cierre?', placeholder:'Ej: 1 semana, 1 mes, varía mucho...'},
+  ],
+  [
+    {tipo:'input', id:'p5-otro-tareas-dia', label:'¿Qué tareas ocupan más tu día a día?', placeholder:'Ej: responder correos, armar reportes, coordinar con clientes...'},
+    {tipo:'input', id:'p5-otro-tiempo-respuesta', label:'¿Cuánto tiempo tardas en resolver una solicitud típica?', placeholder:'Ej: 1 hora, medio día, varios días...'},
+    {tipo:'chips', id:'p5-otro-problema', label:'¿Cuál es tu mayor problema hoy?', hint:'Puedes elegir varias', opciones:['Demasiadas tareas manuales','Falta de organización','Se me olvidan cosas','Pierdo tiempo en tareas repetitivas','Sin sistema de seguimiento','Otro']},
+    {tipo:'input', id:'p5-otro-herramienta', label:'¿Qué usas hoy para organizarte?', placeholder:'Ej: Excel, WhatsApp, cuaderno, nada...'},
   ]
 ];
 
 const preguntasProfit = [
-  {tipo:'input', id:'p5-profit-procesos', label:'¿Qué tareas haces a mano, una y otra vez, en tu negocio?', placeholder:'Ej: agendar citas, responder los mismos mensajes, armar cotizaciones...'},
+  {tipo:'lista', id:'p5-profit-procesos', label:'¿Qué tareas haces a mano, una y otra vez, en tu negocio?', placeholder:'Ej: agendar citas', addLabel:'+ Agregar otra tarea'},
   {tipo:'input', id:'p5-profit-oportunidades', label:'¿Se te han ido clientes o leads por no responder a tiempo o no dar seguimiento?', placeholder:'Ej: sí, varios al mes; no estoy segura...'},
   {tipo:'input', id:'p5-profit-tiempo', label:'¿Cuántas horas a la semana le dedicas a tareas manuales/repetitivas?', placeholder:'Ej: 10 horas a la semana'},
 ];
@@ -502,6 +530,10 @@ function goTo(n){
 
 function toggleChip(el){
   el.classList.toggle('sel');
+}
+
+function toggleOtroCanal(el){
+  document.getElementById('canal-otro-wrap').style.display = el.classList.contains('sel') ? 'block' : 'none';
 }
 
 function selectCat(i, el){
@@ -525,12 +557,37 @@ function buildP5(){
         html += '<div class="chip" onclick="toggleChip(this)">' + o + '</div>';
       });
       html += '</div>';
+      if(p.hint){ html += '<div class="chip-hint">' + p.hint + '</div>'; }
+    } else if(p.tipo === 'lista'){
+      html += '<div id="' + p.id + '-list"></div>';
+      html += '<div class="add-link" onclick="agregarItemLista(\'' + p.id + '-list\',\'' + p.placeholder + '\')">' + p.addLabel + '</div>';
     } else {
       html += '<input type="text" id="' + p.id + '" placeholder="' + p.placeholder + '">';
     }
     html += '</div>';
   });
   document.getElementById('p5fields').innerHTML = html;
+  preguntas.forEach(p => {
+    if(p.tipo === 'lista'){
+      agregarItemLista(p.id + '-list', p.placeholder);
+      agregarItemLista(p.id + '-list', p.placeholder);
+    }
+  });
+}
+
+function agregarItemLista(containerId, placeholder){
+  const row = document.createElement('div');
+  row.className = 'lista-row';
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'lista-input';
+  input.placeholder = placeholder || '';
+  row.appendChild(input);
+  document.getElementById(containerId).appendChild(row);
+}
+function getListaValues(containerId){
+  const el = document.getElementById(containerId);
+  return el ? Array.from(el.querySelectorAll('.lista-input')).map(i => i.value).filter(v => v) : [];
 }
 
 function getVal(id){ const el = document.getElementById(id); return el ? el.value : ''; }
@@ -571,10 +628,15 @@ function enviar(){
     operacion.problema      = getChips('p5-problema-ticket');
     operacion.crm           = getVal('p5-crm');
     operacion.proceso_venta = getVal('p5-proceso-venta');
+  } else if(catSeleccionada === 3){
+    operacion.tareas_dia       = getVal('p5-otro-tareas-dia');
+    operacion.tiempo_respuesta = getVal('p5-otro-tiempo-respuesta');
+    operacion.problema         = getChips('p5-otro-problema');
+    operacion.herramienta      = getVal('p5-otro-herramienta');
   }
 
   const profit = {
-    procesos_repetitivos:   getVal('p5-profit-procesos'),
+    procesos_repetitivos:   getListaValues('p5-profit-procesos-list'),
     oportunidades_perdidas: getVal('p5-profit-oportunidades'),
     inversion_tiempo:       getVal('p5-profit-tiempo')
   };
@@ -598,6 +660,7 @@ function enviar(){
     diferencial:   document.getElementById('f-diferencial').value,
     ticketPromedio:document.getElementById('f-ticket').value,
     canalesCliente:Array.from(document.querySelectorAll('#chips-canal .chip.sel')).map(c=>c.textContent),
+    canalOtroDetalle: document.getElementById('f-canal-otro').value,
     categoria:     catSeleccionada >= 0 ? catNombres[catSeleccionada] : '',
     operacion:     operacion,
     profit:        profit,
