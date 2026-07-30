@@ -487,11 +487,8 @@ const preguntasPorCategoria = [
 
 const preguntasProfit = [
   {tipo:'input', id:'p5-profit-procesos', label:'¿Qué tareas haces a mano, una y otra vez, en tu negocio?', placeholder:'Ej: agendar citas, responder los mismos mensajes, armar cotizaciones...'},
-  {tipo:'input', id:'p5-profit-respuestas', label:'¿Qué tan rápido respondes cuando un cliente te escribe? ¿Y fuera de horario?', placeholder:'Ej: casi de inmediato en horario, nada fuera de horario...'},
   {tipo:'input', id:'p5-profit-oportunidades', label:'¿Se te han ido clientes o leads por no responder a tiempo o no dar seguimiento?', placeholder:'Ej: sí, varios al mes; no estoy segura...'},
-  {tipo:'input', id:'p5-profit-frustraciones', label:'¿Qué es lo que más te frustra de cómo manejas tu negocio hoy?', placeholder:'Ej: perder tiempo respondiendo lo mismo, desorganización...'},
   {tipo:'input', id:'p5-profit-tiempo', label:'¿Cuántas horas a la semana le dedicas a tareas manuales/repetitivas?', placeholder:'Ej: 10 horas a la semana'},
-  {tipo:'input', id:'p5-profit-tecnologia', label:'¿Qué usas hoy para manejar todo esto?', placeholder:'Ej: cuaderno, WhatsApp suelto, Excel, algún CRM, nada...'},
 ];
 
 function goTo(n){
@@ -578,11 +575,8 @@ function enviar(){
 
   const profit = {
     procesos_repetitivos:   getVal('p5-profit-procesos'),
-    respuestas:             getVal('p5-profit-respuestas'),
     oportunidades_perdidas: getVal('p5-profit-oportunidades'),
-    frustraciones:          getVal('p5-profit-frustraciones'),
-    inversion_tiempo:       getVal('p5-profit-tiempo'),
-    tecnologia_actual:      getVal('p5-profit-tecnologia')
+    inversion_tiempo:       getVal('p5-profit-tiempo')
   };
 
   const datos = {
