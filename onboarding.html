@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onboarding de Cliente — LE CODE ONE</title>
+<style>
+  :root{
+    --rosa: #D4537E;
+    --rosa-light: #FCE9EE;
+    --rosa-dark: #7A3B52;
+    --text: #4A2B36;
+    --muted: #B4899A;
+    --border: #F0C9D6;
+    --bg: #FDF4F6;
+    --white: #FFFFFF;
+    --serif: Georgia, 'Times New Roman', serif;
+    --sans: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    font-family:var(--sans);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:32px 16px 60px;
+    color:var(--text);
+  }
+
+  /* HEADER */
+  .header{text-align:center;margin-bottom:32px;}
+  .logo{font-family:var(--serif);font-size:28px;font-weight:400;color:var(--rosa-dark);letter-spacing:.02em;}
+  .logo-sub{font-size:13px;color:var(--muted);margin-top:4px;letter-spacing:.05em;}
+
+  /* PROGRESS */
+  .progress-wrap{width:100%;max-width:520px;margin-bottom:28px;}
+  .progress-track{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--rosa);border-radius:2px;transition:width .4s ease;}
+  .progress-label{font-size:11px;color:var(--muted);margin-top:8px;text-align:right;letter-spacing:.04em;}
+
+  /* CARD */
+  .card{
+    background:var(--white);
+    border:1px solid var(--border);
+    border-radius:20px;
+    width:100%;
+    max-width:520px;
+    padding:36px 32px 28px;
+  }
+
+  /* SCREEN */
+  .screen{display:none;}
+  .screen.active{display:block;}
+  .screen-eyebrow{
+    font-size:10px;
+    font-weight:500;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:10px;
+  }
+  .screen-title{
+    font-family:var(--serif);
+    font-size:22px;
+    font-weight:400;
+    color:var(--rosa-dark);
+    margin-bottom:6px;
+    line-height:1.25;
+  }
+  .screen-sub{
+    font-size:14px;
+    color:var(--muted);
+    margin-bottom:24px;
+    line-height:1.5;
+  }
+
+  /* SECTION LABEL */
+  .sec-label{
+    font-size:10px;
+    font-weight:600;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--rosa);
+    margin:20px 0 12px;
+    padding-bottom:6px;
+    border-bottom:1px solid var(--border);
+  }
+
+  /* FIELDS */
+  .field{margin-bottom:16px;}
+  .field label{
+    display:block;
+    font-size:13px;
+    color:var(--text);
+    margin-bottom:6px;
+    font-weight:500;
+  }
+  .opt{font-size:11px;color:var(--muted);font-weight:400;margin-left:4px;}
+  .field input,
+  .field textarea,
+  .field select{
+    width:100%;
+    padding:11px 14px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:var(--bg);
+    color:var(--text);
+    font-size:14px;
+    font-family:var(--sans);
+    outline:none;
+    transition:border-color .2s;
+  }
+  .field input:focus,
+  .field textarea:focus{border-color:var(--rosa);}
+  .field textarea{resize:vertical;min-height:80px;line-height:1.5;}
+  .field .hint{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.4;}
+
+  /* CHIPS */
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+  .chip{
+    padding:7px 14px;
+    border-radius:24px;
+    border:1px solid var(--border);
+    font-size:13px;
+    color:var(--muted);
+    cursor:pointer;
+    background:var(--white);
+    transition:all .15s;
+    user-select:none;
+  }
+  .chip:hover{border-color:var(--rosa);color:var(--rosa-dark);}
+  .chip.sel{
+    background:var(--rosa-light);
+    border-color:var(--rosa);
+    color:var(--rosa-dark);
+    font-weight:500;
+  }
+  .chip-hint{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.4;}
+
+  /* PAQUETE CARDS */
+  .paquete-ex{
+    margin-top:12px;
+    font-size:13px;
+    color:var(--muted);
+    line-height:1.55;
+    min-height:30px;
+    padding:10px 14px;
+    background:var(--rosa-light);
+    border-radius:10px;
+    display:none;
+  }
+  .paquete-ex.visible{display:block;}
+
+  /* SERVICIOS / LISTAS */
+  .servicio-row{display:flex;gap:8px;margin-bottom:10px;}
+  .servicio-row input{
+    flex:1;
+    padding:11px 14px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:var(--bg);
+    color:var(--text);
+    font-size:14px;
+    font-family:var(--sans);
+    outline:none;
+  }
+  .servicio-row input:focus{border-color:var(--rosa);}
+  .add-link{
+    font-size:13px;
+    color:var(--rosa);
+    cursor:pointer;
+    margin:-4px 0 20px;
+    font-weight:500;
+    user-select:none;
+  }
+  .add-link:hover{color:var(--rosa-dark);text-decoration:underline;}
+  .lista-row{margin-bottom:8px;}
+  .lista-row input{
+    width:100%;
+    padding:11px 14px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:var(--bg);
+    color:var(--text);
+    font-size:14px;
+    font-family:var(--sans);
+    outline:none;
+  }
+  .lista-row input:focus{border-color:var(--rosa);}
+
+  /* ADDON BLOCKS */
+  .addon-block{
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:16px 16px 4px;
+    margin-bottom:16px;
+    background:var(--bg);
+  }
+  .addon-block-title{
+    font-size:13px;
+    font-weight:600;
+    color:var(--rosa-dark);
+    margin-bottom:12px;
+  }
+  .addons-empty{
+    font-size:13px;
+    color:var(--muted);
+    padding:20px 0;
+    text-align:center;
+  }
+
+  /* DIVIDER */
+  hr.div{border:none;border-top:1px solid var(--border);margin:20px 0;}
+
+  /* BUTTONS */
+  .btn-next{
+    width:100%;
+    padding:13px;
+    border-radius:12px;
+    background:var(--rosa);
+    color:#fff;
+    border:none;
+    font-size:15px;
+    font-weight:500;
+    margin-top:12px;
+    cursor:pointer;
+    font-family:var(--sans);
+    transition:background .2s, transform .1s;
+    letter-spacing:.02em;
+  }
+  .btn-next:hover{background:var(--rosa-dark);}
+  .btn-next:active{transform:scale(.98);}
+  .btn-back{
+    width:100%;
+    padding:10px;
+    border-radius:12px;
+    background:transparent;
+    color:var(--muted);
+    border:1px solid var(--border);
+    font-size:13px;
+    margin-top:8px;
+    cursor:pointer;
+    font-family:var(--sans);
+    transition:border-color .2s, color .2s;
+  }
+  .btn-back:hover{border-color:var(--rosa);color:var(--rosa-dark);}
+
+  /* SUMMARY */
+  .summary-item{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:8px 0;
+    border-bottom:1px solid var(--border);
+    font-size:13.5px;
+  }
+  .summary-item:last-child{border-bottom:none;}
+  .summary-check{color:var(--rosa);font-size:16px;flex-shrink:0;margin-top:1px;}
+
+  /* CONFIRM BOX */
+  .confirm-box{
+    background:var(--rosa-light);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px 18px;
+    margin:16px 0 4px;
+  }
+  .confirm-box-title{font-size:13px;font-weight:600;color:var(--rosa-dark);margin-bottom:4px;}
+  .confirm-box p{font-size:12.5px;color:var(--muted);line-height:1.5;}
+
+  /* DRY RUN BADGE */
+  .dryrun-badge{
+    display:inline-block;
+    font-size:10.5px;
+    font-weight:600;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--rosa-dark);
+    background:var(--rosa-light);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:5px 12px;
+    margin-bottom:18px;
+  }
+
+  /* SUCCESS */
+  .success{text-align:center;padding:48px 16px;}
+  .success-icon{
+    width:60px;height:60px;
+    border-radius:50%;
+    background:var(--rosa-light);
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 20px;
+    font-size:26px;
+  }
+  .success-title{font-family:var(--serif);font-size:24px;color:var(--rosa-dark);margin-bottom:8px;}
+  .success-sub{font-size:14px;color:var(--muted);line-height:1.6;}
+
+  @media(max-width:520px){
+    .card{padding:28px 20px 22px;border-radius:16px;}
+    .screen-title{font-size:20px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">LE CODE ONE</div>
+  <div class="logo-sub">onboarding de cliente · uso interno</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-track"><div class="progress-fill" id="progFill" style="width:14.3%"></div></div>
+  <div class="progress-label" id="progLabel">Paso 1 de 7</div>
+</div>
+
+<div class="card" id="mainCard">
+
+  <div id="dryRunBadgeWrap" class="dryrun-badge" style="display:none;">Modo prueba activo — no se enviará nada real</div>
+
+  <!-- ── PANTALLA 1: DATOS DEL NEGOCIO ── -->
+  <div class="screen active" id="s0">
+    <div class="screen-eyebrow">paso 1 de 7 — datos del negocio</div>
+    <div class="screen-title">Empecemos con lo básico</div>
+    <div class="screen-sub">El cliente ya confirmó el pago. Llena esto con lo que te haya compartido para armar su carpeta, su plan y su automatización.</div>
+
+    <div class="field">
+      <label>WhatsApp *</label>
+      <input type="tel" id="f-whatsapp" placeholder="+57 300 123 4567" onblur="buscarPorWhatsapp()" onkeydown="if(event.key==='Enter'){event.preventDefault();buscarPorWhatsapp();}">
+      <div class="hint" id="lookupStatus">Escribe el WhatsApp del cliente y sal del campo — si ya llenó el diagnóstico, prellenamos el resto solo.</div>
+    </div>
+
+    <div id="restoNegocio" style="display:none;">
+      <div class="field">
+        <label>Nombre del negocio *</label>
+        <input type="text" id="f-nombre" placeholder="Ej: Le Belle Lashes">
+      </div>
+      <div class="field">
+        <label>Nombre de la persona de contacto *</label>
+        <input type="text" id="f-contacto" placeholder="Ej: Ana García">
+      </div>
+      <div class="field">
+        <label>Correo electrónico *</label>
+        <input type="email" id="f-email" placeholder="cliente@email.com">
+        <div class="hint">Aquí le llega su Plan de Ejecución en PDF</div>
+      </div>
+      <div class="field">
+        <label>Ciudad *</label>
+        <input type="text" id="f-ciudad" placeholder="Ej: Medellín, Bogotá, Ciudad de México...">
+      </div>
+      <div class="field">
+        <label>Dirección física <span class="opt">opcional</span></label>
+        <input type="text" id="f-direccion" placeholder="Solo si atiende en local propio">
+      </div>
+
+      <button class="btn-next" onclick="goTo(1)">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- ── PANTALLA 2: PAQUETE Y ADDONS ── -->
+  <div class="screen" id="s1">
+    <div class="screen-eyebrow">paso 2 de 7 — paquete contratado</div>
+    <div class="screen-title">¿Qué compró este cliente?</div>
+    <div class="screen-sub">Esto define qué preguntas de operación te vamos a pedir después.</div>
+
+    <div class="sec-label">Paquete base <span class="opt">puedes elegir varios si es un combo</span></div>
+    <div class="chips" id="chips-paquete">
+      <div class="chip" onclick="togglePaquete(0,this)">Fundamentos</div>
+      <div class="chip" onclick="togglePaquete(1,this)">Template A — Citas y Agenda</div>
+      <div class="chip" onclick="togglePaquete(2,this)">Template B — Pedidos y Productos</div>
+      <div class="chip" onclick="togglePaquete(3,this)">Template C — Alto Ticket</div>
+      <div class="chip" onclick="togglePaquete(4,this)">Personalizado</div>
+    </div>
+    <div class="paquete-ex" id="paqueteEx"></div>
+
+    <div class="sec-label">Addons contratados <span class="opt">selecciona los que apliquen</span></div>
+    <div class="chips" id="chips-addons">
+      <div class="chip" onclick="toggleChip(this)">Integración Meta (Leads + DMs)</div>
+      <div class="chip" onclick="toggleChip(this)">Reporte Mensual Meta + IA</div>
+      <div class="chip" onclick="toggleChip(this)">Programación Automática de Publicaciones</div>
+      <div class="chip" onclick="toggleChip(this)">Módulos de Nicho</div>
+      <div class="chip" onclick="toggleChip(this)">Atención por Llamadas (Voz IA)</div>
+      <div class="chip" onclick="toggleChip(this)">Desarrollo Web</div>
+      <div class="chip" onclick="toggleChip(this)">Agente Asistente (Telegram/WhatsApp)</div>
+    </div>
+
+    <button class="btn-next" onclick="goTo(2)">Siguiente →</button>
+    <button class="btn-back" onclick="goTo(0)">← Atrás</button>
+  </div>
+
+  <!-- ── PANTALLA 3: PRESENCIA DIGITAL Y ACCESOS ── -->
+  <div class="screen" id="s2">
+    <div class="screen-eyebrow">paso 3 de 7 — presencia digital y accesos</div>
+    <div class="screen-title">¿Dónde vive este negocio hoy?</div>
+    <div class="screen-sub">Links y herramientas que ya usa, para conectar la automatización sin duplicar nada.</div>
+    <div class="hint" id="presenciaConocida" style="display:none;margin-bottom:16px;"></div>
+
+    <div class="field" id="wrap-instagram">
+      <label>Instagram <span class="opt">opcional</span></label>
+      <input type="text" id="f-instagram" placeholder="instagram.com/negocio">
+    </div>
+    <div class="field" id="wrap-facebook">
+      <label>Facebook <span class="opt">opcional</span></label>
+      <input type="text" id="f-facebook" placeholder="facebook.com/negocio">
+    </div>
+    <div class="field" id="wrap-web">
+      <label>Página web <span class="opt">opcional</span></label>
+      <input type="text" id="f-web" placeholder="www.negocio.com — o 'no tiene'">
+    </div>
+    <div class="field">
+      <label>Correo de Google Calendar a conectar <span class="opt">opcional</span></label>
+      <input type="email" id="f-calendar-email" placeholder="Si el paquete incluye agenda automática">
+    </div>
+    <div class="field">
+      <label>Otros accesos o cuentas relevantes <span class="opt">opcional</span></label>
+      <textarea id="f-accesos-extra" placeholder="Ej: cuenta de Meta Business, dominio ya comprado, sistema de punto de venta..."></textarea>
+    </div>
+
+    <button class="btn-next" onclick="goTo(3)">Siguiente →</button>
+    <button class="btn-back" onclick="goTo(1)">← Atrás</button>
+  </div>
+
+  <!-- ── PANTALLA 4: OPERACIÓN (dinámica por paquete) ── -->
+  <div class="screen" id="s3">
+    <div class="screen-eyebrow" id="p4eyebrow">paso 4 de 7 — operación del negocio</div>
+    <div class="screen-title">Cómo opera el negocio</div>
+    <div class="screen-sub">Esto es lo que el agente necesita para trabajar como lo haría alguien del negocio.</div>
+    <div id="operacionFields"></div>
+    <button class="btn-next" onclick="goTo(4)">Siguiente →</button>
+    <button class="btn-back" onclick="goTo(2)">← Atrás</button>
+  </div>
+
+  <!-- ── PANTALLA 5: ADDONS — DETALLE (dinámica) ── -->
+  <div class="screen" id="s4">
+    <div class="screen-eyebrow">paso 5 de 7 — detalle de addons</div>
+    <div class="screen-title">Detalle de lo contratado extra</div>
+    <div class="screen-sub" id="addonsSub">Solo verás bloques de los addons que marcaste en el paso 2.</div>
+    <div id="addonsFields"></div>
+    <button class="btn-next" onclick="goTo(5)">Siguiente →</button>
+    <button class="btn-back" onclick="goTo(3)">← Atrás</button>
+  </div>
+
+  <!-- ── PANTALLA 6: MARCA Y TONO ── -->
+  <div class="screen" id="s5">
+    <div class="screen-eyebrow">paso 6 de 7 — marca y tono</div>
+    <div class="screen-title">Cómo debe sonar el agente</div>
+    <div class="screen-sub">Esto define el tono de los mensajes, el contenido y el Plan de Ejecución.</div>
+
+    <div class="sec-label">Tono deseado</div>
+    <div class="chips" id="chips-tono">
+      <div class="chip" onclick="selectTono(0,this)">Cercano y cálido</div>
+      <div class="chip" onclick="selectTono(1,this)">Profesional y directo</div>
+      <div class="chip" onclick="selectTono(2,this)">Divertido y casual</div>
+      <div class="chip" onclick="selectTono(3,this)">Elegante y sofisticado</div>
+      <div class="chip" onclick="selectTono(4,this)">Otro</div>
+    </div>
+    <div class="field" id="tono-otro-wrap" style="display:none;margin-top:12px;">
+      <label>¿Cómo describirías el tono?</label>
+      <input type="text" id="f-tono-otro" placeholder="Ej: técnico pero amigable">
+    </div>
+
+    <div class="field" style="margin-top:20px;">
+      <label>Palabras o frases que NO debe usar <span class="opt">opcional</span></label>
+      <textarea id="f-palabras-evitar" placeholder="Ej: nunca usar 'barato', evitar emojis, no tutear a clientes mayores..."></textarea>
+    </div>
+    <div class="field">
+      <label>Ejemplo de un mensaje que le gusta cómo suena <span class="opt">opcional</span></label>
+      <textarea id="f-ejemplo-mensaje" placeholder="Pega un mensaje real que el negocio ya haya enviado y que le guste"></textarea>
+    </div>
+    <div class="field">
+      <label>Notas adicionales para el equipo <span class="opt">opcional</span></label>
+      <textarea id="f-notas-adicionales" placeholder="Cualquier detalle extra que no encajó en las preguntas anteriores"></textarea>
+    </div>
+
+    <button class="btn-next" onclick="goTo(6)">Siguiente →</button>
+    <button class="btn-back" onclick="goTo(4)">← Atrás</button>
+  </div>
+
+  <!-- ── PANTALLA 7: RESUMEN Y ENVÍO ── -->
+  <div class="screen" id="s6">
+    <div class="screen-eyebrow">paso 7 de 7 — confirmar y enviar</div>
+    <div class="screen-title">Listo para registrar al cliente</div>
+    <div class="screen-sub">Al enviar, el agente de Onboarding registra al cliente, crea su carpeta y le genera el Plan de Ejecución.</div>
+
+    <div class="sec-label">Esto va a pasar al enviar</div>
+    <div class="summary-item"><span class="summary-check">✓</span><span>Se registra el cliente como Activo</span></div>
+    <div class="summary-item"><span class="summary-check">✓</span><span>Se crea su carpeta en Drive</span></div>
+    <div class="summary-item"><span class="summary-check">✓</span><span>Se redacta su Plan de Ejecución de 5 semanas</span></div>
+    <div class="summary-item"><span class="summary-check">✓</span><span>Se genera el PDF con el diseño de marca</span></div>
+    <div class="summary-item"><span class="summary-check">✓</span><span>Se le envía por correo al cliente</span></div>
+
+    <hr class="div">
+    <div class="confirm-box">
+      <div class="confirm-box-title" id="confirmTitle">Modo prueba activo</div>
+      <p id="confirmText">No se va a enviar nada real todavía — el envío queda en la consola del navegador. Cuando quieras que esto dispare el agente real, avísame para activarlo.</p>
+    </div>
+
+    <button class="btn-next" onclick="enviar()">Registrar cliente →</button>
+    <button class="btn-back" onclick="goTo(5)">← Atrás</button>
+  </div>
+
+</div>
+
+<script>
+/* ⚠️ Modo prueba: en true, el formulario NO llama al webhook real de
+   Onboarding — solo imprime el payload en la consola y muestra la
+   pantalla de éxito. Cámbialo a false cuando Paula confirme que un envío
+   real (registro de cliente + PDF + correo real al cliente) está aprobado. */
+const DRY_RUN = false;
+const WEBHOOK_URL = 'https://q3uhvgat.rpcld.co/webhook/le-code-one-onboarding-agente';
+const LOOKUP_URL = 'https://q3uhvgat.rpcld.co/webhook/le-code-one-buscar-diagnostico';
+
+let paquetesSeleccionados = [];
+let serviciosPrevios = [];
+let tonoSeleccionado = -1;
+
+const paqueteNombres = [
+  'Fundamentos',
+  'Template A — Citas y Agenda',
+  'Template B — Pedidos y Productos',
+  'Template C — Alto Ticket',
+  'Personalizado'
+];
+
+const paqueteEjemplos = [
+  'Contenido y automatización básica de marketing, sin agenda ni ventas conectadas todavía.',
+  'Negocios con cita o agenda: spas, salones, consultorios, gimnasios, coaches.',
+  'Negocios de venta de productos o pedidos: tiendas online, restaurantes con delivery.',
+  'Negocios consultivos de alto valor: agencias, academias, despachos legales, inmobiliarias.',
+  'No encaja en las categorías anteriores — se define a medida.'
+];
+
+const tonoNombres = [
+  'Cercano y cálido',
+  'Profesional y directo',
+  'Divertido y casual',
+  'Elegante y sofisticado',
+  'Otro'
+];
+
+/* ── Definición de preguntas de operación por paquete ── */
+const operacionPorPaquete = [
+  /* 0 Fundamentos */
+  [],
+  /* 1 Template A — Citas y Agenda */
+  [
+    {tipo:'servicios', id:'op-servicios-precios', label:'Servicios/productos y precios', nombreLabel:'Ej: Extensiones clásicas', precioLabel:'Ej: $80.000'},
+    {tipo:'input', id:'op-a-duracion', label:'Duración típica de cada servicio', placeholder:'Ej: 45 min clásicas, 90 min volumen ruso'},
+    {tipo:'input', id:'op-a-horario', label:'Horario de atención', placeholder:'Ej: Lunes a sábado, 9am a 7pm'},
+    {tipo:'input', id:'op-a-personal', label:'¿Cuántas personas atienden citas / cuántas agendas maneja?', placeholder:'Ej: solo ella, 2 estilistas con agendas separadas'},
+    {tipo:'textarea', id:'op-a-cancelacion', label:'Política de cancelación / no-show', placeholder:'Ej: cancelar con 24h de anticipación o se cobra el 50%'},
+    {tipo:'lista', id:'op-a-faqs', label:'Preguntas frecuentes antes de agendar', addLabel:'+ Agregar otra pregunta', placeholder:'Ej: ¿atienden a domicilio?'}
+  ],
+  /* 2 Template B — Pedidos y Productos */
+  [
+    {tipo:'servicios', id:'op-servicios-precios', label:'Servicios/productos y precios', nombreLabel:'Ej: Combo familiar', precioLabel:'Ej: $65.000'},
+    {tipo:'input', id:'op-b-plataforma', label:'Plataforma donde vende', placeholder:'Ej: Shopify, WhatsApp, Instagram, presencial'},
+    {tipo:'input', id:'op-b-envios', label:'Zonas de envío / delivery', placeholder:'Ej: toda la ciudad, solo zona norte, nacional'},
+    {tipo:'input', id:'op-b-tiempos', label:'Tiempos de entrega', placeholder:'Ej: 24-48h en la ciudad, 3-5 días nacional'},
+    {tipo:'chips', id:'op-b-pagos', label:'Métodos de pago que acepta', opciones:['Efectivo','Transferencia','Tarjeta','Nequi/Daviplata','PayPal','Contraentrega','Otro']},
+    {tipo:'textarea', id:'op-b-devoluciones', label:'Política de cambios/devoluciones', placeholder:'Ej: cambios dentro de 5 días con producto sin uso'}
+  ],
+  /* 3 Template C — Alto Ticket */
+  [
+    {tipo:'servicios', id:'op-servicios-precios', label:'Servicios/productos y precios', nombreLabel:'Ej: Mentoría 1:1 3 meses', precioLabel:'Ej: $3.500.000'},
+    {tipo:'lista', id:'op-c-preguntas', label:'Preguntas clave para calificar un lead', addLabel:'+ Agregar otra pregunta', placeholder:'Ej: ¿cuál es tu presupuesto aproximado?'},
+    {tipo:'input', id:'op-c-duracion-venta', label:'¿Cuánto dura el proceso de venta normalmente?', placeholder:'Ej: 1-2 semanas desde el primer contacto'}
+  ],
+  /* 4 Personalizado */
+  [
+    {tipo:'textarea', id:'op-otro-descripcion', label:'Describe qué necesita automatizar este cliente', placeholder:'Cuenta el proceso o problema a resolver con IA'}
+  ]
+];
+
+/* ── Definición de bloques de addons ── */
+const addonsDef = [
+  {
+    nombre:'Integración Meta (Leads + DMs)',
+    id:'addon-meta',
+    titulo:'Integración Meta (Leads + DMs)',
+    campos:[
+      {tipo:'textarea', id:'ad-meta-tipo', label:'Tipo de mensajes que suele recibir', placeholder:'Ej: preguntas de precio, disponibilidad, ubicación'}
+    ]
+  },
+  {
+    nombre:'Reporte Mensual Meta + IA',
+    id:'addon-reporte',
+    titulo:'Reporte Mensual Meta + IA',
+    campos:[
+      {tipo:'input', id:'ad-reporte-frecuencia', label:'¿A quién más además de Paula debe llegar el reporte?', placeholder:'Ej: solo Paula por ahora'}
+    ]
+  },
+  {
+    nombre:'Programación Automática de Publicaciones',
+    id:'addon-publicaciones',
+    titulo:'Programación Automática de Publicaciones',
+    campos:[]
+  },
+  {
+    nombre:'Módulos de Nicho',
+    id:'addon-nicho',
+    titulo:'Módulos de Nicho',
+    campos:[
+      {tipo:'chips', id:'ad-nicho-modulos', label:'¿Qué módulo(s) necesita?', opciones:['Historial Clínico','Lealtad','Alertas']},
+      {tipo:'textarea', id:'ad-nicho-detalle', label:'Detalle de lo que necesita ese módulo', placeholder:'Ej: registrar alergias y tratamientos previos por cliente'}
+    ]
+  },
+  {
+    nombre:'Atención por Llamadas (Voz IA)',
+    id:'addon-llamadas',
+    titulo:'Atención por Llamadas (Voz IA)',
+    campos:[
+      {tipo:'input', id:'ad-llamadas-telefono', label:'Número de teléfono a conectar', placeholder:'Ej: línea de Twilio o número actual del negocio'},
+      {tipo:'input', id:'ad-llamadas-horario', label:'Horario de atención telefónica', placeholder:'Ej: 9am a 6pm, todos los días'},
+      {tipo:'textarea', id:'ad-llamadas-bienvenida', label:'Mensaje de bienvenida deseado', placeholder:'Ej: Gracias por llamar a [negocio], ¿en qué te ayudo?'}
+    ]
+  },
+  {
+    nombre:'Desarrollo Web',
+    id:'addon-web',
+    titulo:'Desarrollo Web',
+    campos:[
+      {tipo:'input', id:'ad-web-dominio', label:'Dominio deseado', placeholder:'Ej: negocio.com, o subdominio negocio.lecodeone.com'},
+      {tipo:'input', id:'ad-web-colores', label:'Colores de marca', placeholder:'Ej: rosa pastel y dorado'},
+      {tipo:'textarea', id:'ad-web-secciones', label:'Secciones o contenido que debe tener la web', placeholder:'Ej: inicio, servicios, galería, contacto, botón de WhatsApp'}
+    ]
+  },
+  {
+    nombre:'Agente Asistente (Telegram/WhatsApp)',
+    id:'addon-asistente',
+    titulo:'Agente Asistente (Telegram/WhatsApp)',
+    campos:[
+      {tipo:'chips', id:'ad-asistente-canal', label:'¿Por dónde va a hablar con el agente?', opciones:['Telegram','WhatsApp']},
+      {tipo:'textarea', id:'ad-asistente-alcance', label:'¿Qué tareas quiere que el agente resuelva por ese canal?', placeholder:'Ej: consultar agenda, recordar tareas pendientes, resumir mensajes'}
+    ]
+  }
+];
+
+function goTo(n){
+  document.querySelectorAll('.screen').forEach((s,i)=>s.classList.toggle('active',i===n));
+  const pct = ((n+1)/7*100).toFixed(1);
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progLabel').textContent = 'Paso ' + (n+1) + ' de 7';
+  if(n===3) buildOperacion();
+  if(n===4) buildAddonsDetalle();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function toggleChip(el){
+  el.classList.toggle('sel');
+}
+
+function togglePaquete(i, el){
+  const pos = paquetesSeleccionados.indexOf(i);
+  if(pos === -1){ paquetesSeleccionados.push(i); el.classList.add('sel'); }
+  else { paquetesSeleccionados.splice(pos, 1); el.classList.remove('sel'); }
+  paquetesSeleccionados.sort((a,b)=>a-b);
+  const ex = document.getElementById('paqueteEx');
+  if(paquetesSeleccionados.length === 0){
+    ex.textContent = '';
+    ex.classList.remove('visible');
+  } else {
+    ex.textContent = paquetesSeleccionados.map(idx => paqueteNombres[idx] + ': ' + paqueteEjemplos[idx]).join(' · ');
+    ex.classList.add('visible');
+  }
+}
+
+function selectTono(i, el){
+  tonoSeleccionado = i;
+  document.querySelectorAll('#chips-tono .chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('tono-otro-wrap').style.display = (i===4) ? 'block' : 'none';
+}
+
+/* ── Render genérico de campos (reusado por operación y addons) ── */
+function renderCampo(p){
+  let html = '<div class="field"><label>' + p.label + '</label>';
+  if(p.tipo === 'chips'){
+    html += '<div class="chips" id="' + p.id + '">';
+    p.opciones.forEach(o => { html += '<div class="chip" onclick="toggleChip(this)">' + o + '</div>'; });
+    html += '</div>';
+  } else if(p.tipo === 'lista'){
+    html += '<div id="' + p.id + '-list"></div>';
+    html += '<div class="add-link" onclick="agregarItemLista(\'' + p.id + '-list\',\'' + (p.placeholder||'') + '\')">' + p.addLabel + '</div>';
+  } else if(p.tipo === 'servicios'){
+    html += '<div id="' + p.id + '-list"></div>';
+    html += '<div class="add-link" onclick="agregarServicio(\'' + p.id + '-list\',\'' + (p.nombreLabel||'') + '\',\'' + (p.precioLabel||'') + '\')">+ Agregar otro</div>';
+  } else if(p.tipo === 'textarea'){
+    html += '<textarea id="' + p.id + '" placeholder="' + (p.placeholder||'') + '"></textarea>';
+  } else {
+    html += '<input type="text" id="' + p.id + '" placeholder="' + (p.placeholder||'') + '">';
+  }
+  html += '</div>';
+  return html;
+}
+
+function buildOperacion(){
+  if(paquetesSeleccionados.length === 0){ paquetesSeleccionados = [0]; }
+  document.getElementById('p4eyebrow').textContent = 'paso 4 de 7 — operación · ' + paquetesSeleccionados.map(i=>paqueteNombres[i]).join(' + ');
+  const vistos = new Set();
+  const preguntas = [];
+  paquetesSeleccionados.forEach(i => {
+    operacionPorPaquete[i].forEach(p => {
+      if(!vistos.has(p.id)){ vistos.add(p.id); preguntas.push(p); }
+    });
+  });
+  let html = '';
+  if(preguntas.length === 0){
+    html = '<div class="addons-empty">Sin datos que pedir — por dónde empezar lo define el equipo de LE CODE ONE según el diagnóstico.</div>';
+  } else {
+    preguntas.forEach(p => { html += renderCampo(p); });
+  }
+  document.getElementById('operacionFields').innerHTML = html;
+  preguntas.forEach(p => {
+    if(p.tipo === 'lista'){
+      agregarItemLista(p.id + '-list', p.placeholder);
+      agregarItemLista(p.id + '-list', p.placeholder);
+    } else if(p.tipo === 'servicios'){
+      if(serviciosPrevios.length > 0){
+        serviciosPrevios.forEach(s => {
+          agregarServicio(p.id + '-list', p.nombreLabel, p.precioLabel, s.item || s.servicio || '', s.precio || '');
+        });
+        const hint = document.createElement('div');
+        hint.className = 'hint';
+        hint.textContent = '✓ Prellenado con lo que ya nos compartió en el diagnóstico — revisa y ajusta si cambió algo.';
+        document.getElementById(p.id + '-list').after(hint);
+      } else {
+        agregarServicio(p.id + '-list', p.nombreLabel, p.precioLabel);
+        agregarServicio(p.id + '-list', p.nombreLabel, p.precioLabel);
+      }
+    }
+  });
+}
+
+function buildAddonsDetalle(){
+  const seleccionados = Array.from(document.querySelectorAll('#chips-addons .chip.sel')).map(c=>c.textContent);
+  const activos = addonsDef.filter(a => seleccionados.includes(a.nombre));
+  const cont = document.getElementById('addonsFields');
+  if(activos.length === 0){
+    cont.innerHTML = '<div class="addons-empty">No marcaste addons en el paso 2 — puedes continuar.</div>';
+    return;
+  }
+  let html = '';
+  activos.forEach(addon => {
+    html += '<div class="addon-block" id="' + addon.id + '">';
+    html += '<div class="addon-block-title">' + addon.titulo + '</div>';
+    if(addon.campos.length === 0){
+      html += '<div class="addons-empty" style="padding:4px 0;">Sin datos que pedir — esto lo define el equipo de LE CODE ONE.</div>';
+    } else {
+      addon.campos.forEach(p => { html += renderCampo(p); });
+    }
+    html += '</div>';
+  });
+  cont.innerHTML = html;
+}
+
+function agregarItemLista(containerId, placeholder){
+  const row = document.createElement('div');
+  row.className = 'lista-row';
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'lista-input';
+  input.placeholder = placeholder || '';
+  row.appendChild(input);
+  document.getElementById(containerId).appendChild(row);
+}
+function getListaValues(containerId){
+  const el = document.getElementById(containerId);
+  return el ? Array.from(el.querySelectorAll('.lista-input')).map(i => i.value).filter(v => v) : [];
+}
+
+function agregarServicio(containerId, nombreLabel, precioLabel, valNombre, valPrecio){
+  const row = document.createElement('div');
+  row.className = 'servicio-row';
+  row.innerHTML = '<input type="text" class="servicio-nombre" placeholder="' + (nombreLabel||'Nombre') + '">' +
+                   '<input type="text" class="servicio-precio" placeholder="' + (precioLabel||'Precio') + '">';
+  document.getElementById(containerId).appendChild(row);
+  if(valNombre) row.querySelector('.servicio-nombre').value = valNombre;
+  if(valPrecio) row.querySelector('.servicio-precio').value = valPrecio;
+}
+function getServicios(containerId){
+  const el = document.getElementById(containerId);
+  if(!el) return [];
+  return Array.from(el.querySelectorAll('.servicio-row')).map(row => ({
+    item: row.querySelector('.servicio-nombre').value,
+    precio: row.querySelector('.servicio-precio').value
+  })).filter(s => s.item || s.precio);
+}
+
+function getVal(id){ const el = document.getElementById(id); return el ? el.value : ''; }
+function getChips(id){ const el = document.getElementById(id); return el ? Array.from(el.querySelectorAll('.chip.sel')).map(c=>c.textContent) : []; }
+
+/* ── Recolectar operación según paquete ── */
+function recolectarOperacion(){
+  const vistos = new Set();
+  const preguntas = [];
+  paquetesSeleccionados.forEach(i => {
+    (operacionPorPaquete[i] || []).forEach(p => {
+      if(!vistos.has(p.id)){ vistos.add(p.id); preguntas.push(p); }
+    });
+  });
+  const out = {};
+  preguntas.forEach(p => {
+    if(p.tipo === 'chips') out[p.id] = getChips(p.id);
+    else if(p.tipo === 'lista') out[p.id] = getListaValues(p.id + '-list');
+    else if(p.tipo === 'servicios') out[p.id] = getServicios(p.id + '-list');
+    else out[p.id] = getVal(p.id);
+  });
+  return out;
+}
+
+/* ── Recolectar detalle de addons activos ── */
+function recolectarAddonsDetalle(){
+  const seleccionados = Array.from(document.querySelectorAll('#chips-addons .chip.sel')).map(c=>c.textContent);
+  const activos = addonsDef.filter(a => seleccionados.includes(a.nombre));
+  const out = {};
+  activos.forEach(addon => {
+    const campos = {};
+    addon.campos.forEach(p => {
+      if(p.tipo === 'chips') campos[p.id] = getChips(p.id);
+      else campos[p.id] = getVal(p.id);
+    });
+    out[addon.id] = campos;
+  });
+  return out;
+}
+
+if(DRY_RUN){
+  document.getElementById('dryRunBadgeWrap').style.display = 'inline-block';
+}
+
+/* ── Buscar diagnóstico previo por WhatsApp y prellenar campos ya conocidos ── */
+function buscarPorWhatsapp(){
+  const numero = getVal('f-whatsapp').trim().replace(/\D/g, '');
+  const statusEl = document.getElementById('lookupStatus');
+  const resto = document.getElementById('restoNegocio');
+  if(!numero){ statusEl.textContent = 'Escribe el WhatsApp del cliente y sal del campo — si ya llenó el diagnóstico, prellenamos el resto solo.'; return; }
+  statusEl.textContent = 'Buscando diagnóstico previo...';
+  statusEl.style.color = 'var(--muted)';
+  fetch(LOOKUP_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ whatsapp: numero })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if(data && data.encontrado){
+        const setIfEmpty = (id, val) => {
+          const el = document.getElementById(id);
+          if(el && !el.value && val) el.value = val;
+        };
+        setIfEmpty('f-nombre', data.nombre_negocio);
+        setIfEmpty('f-contacto', data.contacto);
+        setIfEmpty('f-email', data.email);
+        setIfEmpty('f-ciudad', data.ciudad);
+        setIfEmpty('f-instagram', data.instagram);
+        setIfEmpty('f-facebook', data.facebook);
+        setIfEmpty('f-web', data.web);
+        if(Array.isArray(data.servicios) && data.servicios.length > 0){
+          serviciosPrevios = data.servicios;
+        }
+        const conocidos = [];
+        [['instagram','Instagram',data.instagram],['facebook','Facebook',data.facebook],['web','Página web',data.web]].forEach(([campo,label,val]) => {
+          if(val){
+            document.getElementById('wrap-' + campo).style.display = 'none';
+            conocidos.push(label + ': ' + val);
+          }
+        });
+        if(conocidos.length > 0){
+          const pc = document.getElementById('presenciaConocida');
+          pc.style.display = 'block';
+          pc.textContent = '✓ Ya sabemos: ' + conocidos.join(' · ');
+        }
+        statusEl.textContent = '✓ Encontramos su diagnóstico previo — prellenamos lo que ya sabíamos.';
+        statusEl.style.color = 'var(--rosa)';
+      } else {
+        statusEl.textContent = 'No hay diagnóstico previo con este WhatsApp — llena los datos manualmente.';
+        statusEl.style.color = 'var(--muted)';
+      }
+    })
+    .catch(err => {
+      console.error('Error buscando diagnóstico previo:', err);
+      statusEl.textContent = 'No pudimos buscar el diagnóstico previo — llena los datos manualmente.';
+    })
+    .finally(() => {
+      resto.style.display = 'block';
+    });
+}
+
+function enviar(){
+  const datos = {
+    negocio: {
+      nombre: getVal('f-nombre'),
+      contacto: getVal('f-contacto'),
+      whatsapp: getVal('f-whatsapp'),
+      email: getVal('f-email'),
+      ciudad: getVal('f-ciudad'),
+      direccion: getVal('f-direccion')
+    },
+    paquete: paquetesSeleccionados.map(i => paqueteNombres[i]).join(' + '),
+    addons: Array.from(document.querySelectorAll('#chips-addons .chip.sel')).map(c=>c.textContent),
+    presencia: {
+      instagram: getVal('f-instagram'),
+      facebook: getVal('f-facebook'),
+      web: getVal('f-web'),
+      calendarEmail: getVal('f-calendar-email'),
+      accesosExtra: getVal('f-accesos-extra')
+    },
+    operacion: recolectarOperacion(),
+    addonsDetalle: recolectarAddonsDetalle(),
+    marca: {
+      tono: tonoSeleccionado >= 0 ? tonoNombres[tonoSeleccionado] : '',
+      tonoOtro: getVal('f-tono-otro'),
+      palabrasEvitar: getVal('f-palabras-evitar'),
+      ejemploMensaje: getVal('f-ejemplo-mensaje'),
+      notasAdicionales: getVal('f-notas-adicionales')
+    }
+  };
+
+  if(DRY_RUN){
+    console.log('[MODO PRUEBA] Payload de Onboarding (no enviado):', datos);
+  } else {
+    fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datos)
+    }).catch(err => console.error('Error enviando onboarding:', err));
+  }
+
+  document.getElementById('mainCard').innerHTML = `
+    <div class="success">
+      <div class="success-icon">✓</div>
+      <div class="success-title">${DRY_RUN ? 'Payload listo (modo prueba)' : 'Cliente registrado'}</div>
+      <div class="success-sub">
+        ${DRY_RUN
+          ? 'No se envió nada real. Revisa la consola del navegador (F12) para ver el JSON completo que se habría mandado al agente.'
+          : 'El agente de Onboarding está creando la carpeta del cliente y su Plan de Ejecución. Le llegará por correo en unos minutos.'}
+        <br><br>
+        <span style="color:var(--rosa);font-weight:500;">LE CODE ONE · Onboarding</span>
+      </div>
+    </div>`;
+  document.getElementById('progFill').style.width = '100%';
+  document.getElementById('progLabel').textContent = '¡Completado!';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+
+</body>
+</html>
