@@ -276,26 +276,29 @@
 </div>
 
 <div class="progress-wrap">
-  <div class="progress-track"><div class="progress-fill" id="progFill" style="width:20%"></div></div>
-  <div class="progress-label" id="progLabel">Paso 1 de 5</div>
+  <div class="progress-track"><div class="progress-fill" id="progFill" style="width:16.7%"></div></div>
+  <div class="progress-label" id="progLabel">Paso 1 de 6</div>
 </div>
 
 <div class="card" id="mainCard">
 
+  <!-- ── PANTALLA 0: MODELO DE SERVICIO ── -->
+  <div class="screen active" id="s-modelo">
+    <div class="screen-eyebrow">paso 1 de 6 — modelo de servicio</div>
+    <div class="screen-title">¿Qué modelo vas a contratar?</div>
+    <div class="screen-sub">Tu asesor de LE CODE ONE ya te indicó cuál te corresponde. Elegí una opción para continuar.</div>
+
+    <div class="chips" id="chips-modelo">
+      <div class="chip" onclick="selectModelo('Automatización',this)">Automatización</div>
+      <div class="chip" onclick="selectModelo('Socio de IA',this)">Socio de IA</div>
+    </div>
+  </div>
+
   <!-- ── PANTALLA 1: DATOS BÁSICOS ── -->
-  <div class="screen active" id="s0">
-    <div class="screen-eyebrow">paso 1 de 5 — datos básicos</div>
+  <div class="screen" id="s0">
+    <div class="screen-eyebrow">paso 2 de 6 — datos básicos</div>
     <div class="screen-title">Cuéntanos sobre tu negocio</div>
     <div class="screen-sub">Solo toma 5 minutos. Al final recibes tu diagnóstico gratis por correo.</div>
-
-    <div class="field">
-      <label>Modelo de servicio *</label>
-      <div class="chips" id="chips-modelo">
-        <div class="chip" onclick="selectModelo('Automatización',this)">Automatización</div>
-        <div class="chip" onclick="selectModelo('Socio de IA',this)">Socio de IA</div>
-      </div>
-      <div class="hint">Tu asesor de LE CODE ONE te indicó cuál te corresponde.</div>
-    </div>
 
     <div class="field">
       <label>Nombre del negocio *</label>
@@ -319,12 +322,13 @@
       <input type="text" id="f-ciudad" placeholder="Ej: Medellín, Bogotá, Ciudad de México...">
     </div>
 
-    <button class="btn-next" onclick="goTo(1)">Siguiente →</button>
+    <button class="btn-next" onclick="goTo(2)">Siguiente →</button>
+    <button class="btn-back" onclick="goTo(0)">← Atrás</button>
   </div>
 
   <!-- ── PANTALLA 2: PRESENCIA DIGITAL ── -->
   <div class="screen" id="s1">
-    <div class="screen-eyebrow">paso 2 de 5 — presencia digital</div>
+    <div class="screen-eyebrow">paso 3 de 6 — presencia digital</div>
     <div class="screen-title">¿Dónde te encuentran tus clientes?</div>
     <div class="screen-sub">Comparte tus links. Mientras más compartas, mejor el diagnóstico.</div>
 
@@ -374,13 +378,13 @@
     <div id="servicios-list"></div>
     <div class="add-link" onclick="agregarServicio()">+ Agregar otro servicio</div>
 
-    <button class="btn-next" onclick="goTo(2)">Siguiente →</button>
-    <button class="btn-back" onclick="goTo(0)">← Atrás</button>
+    <button class="btn-next" onclick="goTo(3)">Siguiente →</button>
+    <button class="btn-back" onclick="goTo(1)">← Atrás</button>
   </div>
 
   <!-- ── PANTALLA 3: CATEGORÍA ── -->
   <div class="screen" id="s3">
-    <div class="screen-eyebrow">paso 3 de 5 — categoría de negocio</div>
+    <div class="screen-eyebrow">paso 4 de 6 — categoría de negocio</div>
     <div class="screen-title">¿Cómo generas ingresos?</div>
     <div class="screen-sub">Elige la opción que mejor describe tu modelo de negocio.</div>
 
@@ -393,32 +397,30 @@
 
     <div class="cat-ex" id="catEx"></div>
 
-    <button class="btn-next" onclick="goTo(3)" style="margin-top:20px;">Siguiente →</button>
-    <button class="btn-back" onclick="goTo(1)">← Atrás</button>
+    <button class="btn-next" onclick="goTo(4)" style="margin-top:20px;">Siguiente →</button>
+    <button class="btn-back" onclick="goTo(2)">← Atrás</button>
   </div>
 
   <!-- ── PANTALLA 4: OPERACIÓN (dinámica por categoría) ── -->
   <div class="screen" id="s4">
-    <div class="screen-eyebrow" id="p5eyebrow">paso 4 de 5 — operación diaria</div>
+    <div class="screen-eyebrow" id="p5eyebrow">paso 5 de 6 — operación diaria</div>
     <div class="screen-title">Tu operación diaria</div>
     <div class="screen-sub">Estas preguntas nos ayudan a identificar exactamente dónde está el cuello de botella.</div>
     <div id="p5fields"></div>
-    <button class="btn-next" onclick="goTo(4)">Siguiente →</button>
-    <button class="btn-back" onclick="goTo(2)">← Atrás</button>
+    <button class="btn-next" onclick="goTo(5)">Siguiente →</button>
+    <button class="btn-back" onclick="goTo(3)">← Atrás</button>
   </div>
 
   <!-- ── PANTALLA 5: RESUMEN Y ENVÍO ── -->
   <div class="screen" id="s5">
-    <div class="screen-eyebrow">paso 5 de 5 — confirmar y enviar</div>
+    <div class="screen-eyebrow">paso 6 de 6 — confirmar y enviar</div>
     <div class="screen-title">¡Casi listo!</div>
     <div class="screen-sub">Revisa y envía para recibir tu diagnóstico personalizado.</div>
 
     <div class="sec-label">Lo que vamos a analizar</div>
     <div class="summary-item"><span class="summary-check">✓</span><span>Presencia digital y branding</span></div>
-    <div class="summary-item"><span class="summary-check">✓</span><span>Perfil de tu cliente ideal</span></div>
     <div class="summary-item"><span class="summary-check">✓</span><span>Cuello de botella principal</span></div>
     <div class="summary-item"><span class="summary-check">✓</span><span>Paquete de automatización recomendado</span></div>
-    <div class="summary-item"><span class="summary-check">✓</span><span>Preview de hooks de contenido para tu negocio</span></div>
     <div class="summary-item"><span class="summary-check">✓</span><span>Proyección de ROI con casos reales de tu nicho</span></div>
     <div class="summary-item"><span class="summary-check">✓</span><span>Addons que podrían potenciar tu resultado</span></div>
 
@@ -434,7 +436,7 @@
     </div>
 
     <button class="btn-next" onclick="enviar()">Enviar y recibir mi diagnóstico →</button>
-    <button class="btn-back" onclick="goTo(3)">← Atrás</button>
+    <button class="btn-back" onclick="goTo(4)">← Atrás</button>
   </div>
 
 </div>
@@ -493,10 +495,10 @@ const preguntasProfit = [
 
 function goTo(n){
   document.querySelectorAll('.screen').forEach((s,i)=>s.classList.toggle('active',i===n));
-  const pct = ((n+1)/5*100).toFixed(0);
+  const pct = ((n+1)/6*100).toFixed(1);
   document.getElementById('progFill').style.width = pct + '%';
-  document.getElementById('progLabel').textContent = 'Paso ' + (n+1) + ' de 5';
-  if(n===3) buildP5();
+  document.getElementById('progLabel').textContent = 'Paso ' + (n+1) + ' de 6';
+  if(n===4) buildP5();
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
@@ -509,6 +511,7 @@ function selectModelo(val, el){
   modeloSeleccionado = val;
   document.querySelectorAll('#chips-modelo .chip').forEach(c=>c.classList.remove('sel'));
   el.classList.add('sel');
+  setTimeout(() => goTo(1), 200);
 }
 
 let pautaSeleccionada = null;
