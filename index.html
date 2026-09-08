@@ -378,6 +378,12 @@
     <div id="servicios-list"></div>
     <div class="add-link" onclick="agregarServicio()">+ Agregar otro servicio</div>
 
+    <div class="field">
+      <label>¿Cuánto te paga en promedio un cliente típico? *</label>
+      <input type="text" id="f-ticket-promedio" placeholder="Ej: $65.000">
+      <div class="hint">No el precio más caro ni el más barato, el que más se repite. Ej: si tus precios van de $20.000 a $130.000 pero la mayoría paga $65.000, ese es tu promedio.</div>
+    </div>
+
     <button class="btn-next" onclick="goTo(3)">Siguiente →</button>
     <button class="btn-back" onclick="goTo(1)">← Atrás</button>
   </div>
@@ -642,6 +648,7 @@ function enviar(){
     otrosCanales:  document.getElementById('f-otroscanales').value,
     oferta:        document.getElementById('f-oferta').value,
     servicios:     getServicios(),
+    ticketPromedio: document.getElementById('f-ticket-promedio').value,
     categoria:     catSeleccionada >= 0 ? catNombres[catSeleccionada] : '',
     operacion:     operacion,
     profit:        profit,
