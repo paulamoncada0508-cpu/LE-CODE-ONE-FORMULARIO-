@@ -94,14 +94,8 @@
 
   <div class="card">
     <div class="card-title">Paquete</div>
-    <div class="card-sub">Ya viene establecido desde el link del Documento A — no hace falta elegirlo.</div>
-    <div class="chips" id="paqueteChips">
-      <div class="chip" data-paquete="0">Posicionamiento</div>
-      <div class="chip" data-paquete="1">Paquete A — Captación</div>
-      <div class="chip" data-paquete="2">Paquete B — Conversión</div>
-      <div class="chip" data-paquete="3">Paquete C — Crecimiento</div>
-      <div class="chip" data-paquete="4">Personalizado</div>
-    </div>
+    <div class="card-sub">Ya viene establecido desde el link del Documento A.</div>
+    <div class="chip selected" id="paqueteActual"></div>
   </div>
 
   <div class="card">
@@ -158,7 +152,8 @@ const accesosPorPaquete = [
   ['WhatsApp Business (número a conectar)']
 ];
 
-const chips = document.querySelectorAll('.chip');
+const nombresPaquete = ['Posicionamiento', 'Paquete A — Captación', 'Paquete B — Conversión', 'Paquete C — Crecimiento', 'Personalizado'];
+const paqueteActual = document.getElementById('paqueteActual');
 const accesosContainer = document.getElementById('accesosContainer');
 const preguntasContainer = document.getElementById('preguntasContainer');
 
@@ -185,7 +180,7 @@ function render(paqueteIdx) {
 const params = new URLSearchParams(window.location.search);
 const paqueteParam = parseInt(params.get('paquete'), 10);
 const paqueteInicial = (paqueteParam >= 0 && paqueteParam <= 4) ? paqueteParam : 0;
-chips[paqueteInicial].classList.add('selected');
+paqueteActual.textContent = nombresPaquete[paqueteInicial];
 render(paqueteInicial);
 </script>
 
