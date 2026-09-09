@@ -57,14 +57,16 @@
   .chips{display:flex;flex-wrap:wrap;gap:8px;}
   .chip{
     padding:9px 16px;border:1.5px solid var(--border);border-radius:999px;font-size:13px;
-    font-weight:600;color:var(--rosa-dark);cursor:pointer;background:var(--white);user-select:none;
+    font-weight:600;color:var(--muted);background:var(--white);user-select:none;opacity:.45;
   }
-  .chip.selected{background:var(--rosa);border-color:var(--rosa);color:white;}
+  .chip.selected{background:var(--rosa);border-color:var(--rosa);color:white;opacity:1;}
   .paquete-block{display:none;margin-top:18px;}
   .paquete-block.active{display:block;}
-  .acceso-item{display:flex;align-items:flex-start;gap:10px;background:var(--rosa-light);border-radius:10px;padding:10px 12px;margin-bottom:8px;}
+  .acceso-item{background:var(--rosa-light);border-radius:10px;padding:10px 12px;margin-bottom:8px;}
+  .acceso-check{display:flex;align-items:flex-start;gap:10px;}
   .acceso-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--rosa);flex-shrink:0;}
   .acceso-item label{margin:0;font-size:13px;font-weight:500;color:var(--rosa-dark);cursor:pointer;}
+  .acceso-obs{width:100%;margin-top:8px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:12.5px;font-family:var(--sans);background:var(--white);}
   .pregunta-block{margin-bottom:16px;}
   .pregunta-texto{font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:6px;}
   .plan-item{background:var(--bg);border-left:3px solid var(--gold);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:13px;}
@@ -91,19 +93,8 @@
   </div>
 
   <div class="card">
-    <div class="card-title">Datos del negocio</div>
-    <div class="card-sub">Llená esto primero, con el negocio que tenés en la llamada.</div>
-    <label for="nombreNegocio">Nombre del negocio</label>
-    <input type="text" id="nombreNegocio" placeholder="Ej: Le Belle Lashes">
-    <label for="nombreContacto">Nombre de contacto</label>
-    <input type="text" id="nombreContacto" placeholder="Ej: María">
-    <label for="fechaLlamada">Fecha de la llamada</label>
-    <input type="date" id="fechaLlamada">
-  </div>
-
-  <div class="card">
     <div class="card-title">Paquete</div>
-    <div class="card-sub">Elegí el paquete de este cliente para ver sus accesos y preguntas correspondientes.</div>
+    <div class="card-sub">Ya viene establecido desde el link del Documento A — no hace falta elegirlo.</div>
     <div class="chips" id="paqueteChips">
       <div class="chip" data-paquete="0">Posicionamiento</div>
       <div class="chip" data-paquete="1">Paquete A — Captación</div>
@@ -114,8 +105,13 @@
   </div>
 
   <div class="card">
+    <label for="fechaLlamada">Fecha de la llamada</label>
+    <input type="date" id="fechaLlamada">
+  </div>
+
+  <div class="card">
     <div class="card-title"><span class="section-number">1</span>Accesos que va a dar el negocio</div>
-    <div class="card-sub">Marcá los que ya te confirmó o te dio en la llamada.</div>
+    <div class="card-sub">Marcá los que ya te confirmó o te dio en la llamada, y anotá cualquier observación.</div>
     <div id="accesosContainer"></div>
   </div>
 
@@ -169,8 +165,11 @@ const preguntasContainer = document.getElementById('preguntasContainer');
 function render(paqueteIdx) {
   accesosContainer.innerHTML = accesosPorPaquete[paqueteIdx].map((a, i) => `
     <div class="acceso-item">
-      <input type="checkbox" id="acceso_${i}">
-      <label for="acceso_${i}">${a}</label>
+      <div class="acceso-check">
+        <input type="checkbox" id="acceso_${i}">
+        <label for="acceso_${i}">${a}</label>
+      </div>
+      <input type="text" class="acceso-obs" id="acceso_obs_${i}" placeholder="Observación (opcional)...">
     </div>
   `).join('');
 
@@ -182,14 +181,6 @@ function render(paqueteIdx) {
     </div>
   `).join('') : '<div class="note">Este paquete no tiene preguntas específicas.</div>';
 }
-
-chips.forEach(chip => {
-  chip.addEventListener('click', () => {
-    chips.forEach(c => c.classList.remove('selected'));
-    chip.classList.add('selected');
-    render(parseInt(chip.dataset.paquete, 10));
-  });
-});
 
 const params = new URLSearchParams(window.location.search);
 const paqueteParam = parseInt(params.get('paquete'), 10);
