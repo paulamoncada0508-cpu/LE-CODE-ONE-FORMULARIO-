@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documento A editable — LE CODE ONE</title>
+<style>
+  :root{
+    --rosa: #D4537E;
+    --rosa-light: #FCE9EE;
+    --rosa-dark: #7A3B52;
+    --gold: #C9A14A;
+    --text: #4A2B36;
+    --muted: #B4899A;
+    --border: #F0C9D6;
+    --bg: #FDF4F6;
+    --white: #FFFFFF;
+    --serif: Georgia, 'Times New Roman', serif;
+    --sans: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    font-family:var(--sans);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:32px 16px 80px;
+    color:var(--text);
+  }
+  .header{text-align:center;margin-bottom:28px;}
+  .logo{font-family:var(--serif);font-size:26px;font-weight:400;color:var(--rosa-dark);letter-spacing:.02em;}
+  .logo-sub{font-size:13px;color:var(--muted);margin-top:4px;letter-spacing:.05em;}
+  .card{
+    background:var(--white);
+    border:1px solid var(--border);
+    border-radius:20px;
+    width:100%;
+    max-width:640px;
+    padding:32px 28px;
+    margin-bottom:20px;
+  }
+  .card-title{font-size:15px;font-weight:700;color:var(--rosa-dark);margin-bottom:4px;}
+  .card-sub{font-size:12.5px;color:var(--muted);margin-bottom:18px;}
+  label{display:block;font-size:12px;font-weight:600;color:var(--rosa-dark);margin-bottom:6px;margin-top:14px;}
+  label:first-of-type{margin-top:0;}
+  input[type="text"], input[type="date"]{
+    width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;
+    font-size:14px;color:var(--text);font-family:var(--sans);background:var(--bg);
+  }
+  input[type="text"]:focus, input[type="date"]:focus, textarea:focus{outline:2px solid var(--rosa);outline-offset:1px;}
+  textarea{
+    width:100%;min-height:64px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;
+    font-size:14px;color:var(--text);font-family:var(--sans);background:var(--bg);resize:vertical;
+  }
+  .chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{
+    padding:9px 16px;border:1.5px solid var(--border);border-radius:999px;font-size:13px;
+    font-weight:600;color:var(--rosa-dark);cursor:pointer;background:var(--white);user-select:none;
+  }
+  .chip.selected{background:var(--rosa);border-color:var(--rosa);color:white;}
+  .paquete-block{display:none;margin-top:18px;}
+  .paquete-block.active{display:block;}
+  .acceso-item{display:flex;align-items:flex-start;gap:10px;background:var(--rosa-light);border-radius:10px;padding:10px 12px;margin-bottom:8px;}
+  .acceso-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--rosa);flex-shrink:0;}
+  .acceso-item label{margin:0;font-size:13px;font-weight:500;color:var(--rosa-dark);cursor:pointer;}
+  .pregunta-block{margin-bottom:16px;}
+  .pregunta-texto{font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:6px;}
+  .plan-item{background:var(--bg);border-left:3px solid var(--gold);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:13px;}
+  .plan-item b{color:var(--rosa-dark);display:block;font-size:13px;margin-bottom:2px;}
+  .section-number{display:inline-flex;width:22px;height:22px;border-radius:50%;background:var(--rosa-med, var(--rosa));color:white;font-size:12px;font-weight:700;align-items:center;justify-content:center;margin-right:8px;}
+  .note{font-size:11.5px;color:var(--muted);margin-top:6px;font-style:italic;}
+  .print-btn{
+    background:var(--rosa-dark);color:white;border:none;border-radius:12px;
+    padding:14px 24px;font-size:14px;font-weight:700;cursor:pointer;width:100%;max-width:640px;
+  }
+  .print-btn:hover{background:var(--rosa);}
+  @media print{
+    .print-btn{display:none;}
+    body{background:white;padding:0;}
+    .card{box-shadow:none;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="logo">LE CODE ONE</div>
+    <div class="logo-sub">Documento A editable — para llenar en vivo durante la llamada</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Datos del negocio</div>
+    <div class="card-sub">Llená esto primero, con el negocio que tenés en la llamada.</div>
+    <label for="nombreNegocio">Nombre del negocio</label>
+    <input type="text" id="nombreNegocio" placeholder="Ej: Le Belle Lashes">
+    <label for="nombreContacto">Nombre de contacto</label>
+    <input type="text" id="nombreContacto" placeholder="Ej: María">
+    <label for="fechaLlamada">Fecha de la llamada</label>
+    <input type="date" id="fechaLlamada">
+  </div>
+
+  <div class="card">
+    <div class="card-title">Paquete</div>
+    <div class="card-sub">Elegí el paquete de este cliente para ver sus accesos y preguntas correspondientes.</div>
+    <div class="chips" id="paqueteChips">
+      <div class="chip" data-paquete="0">Posicionamiento</div>
+      <div class="chip" data-paquete="1">Paquete A — Captación</div>
+      <div class="chip" data-paquete="2">Paquete B — Conversión</div>
+      <div class="chip" data-paquete="3">Paquete C — Crecimiento</div>
+      <div class="chip" data-paquete="4">Personalizado</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="section-number">1</span>Accesos que va a dar el negocio</div>
+    <div class="card-sub">Marcá los que ya te confirmó o te dio en la llamada.</div>
+    <div id="accesosContainer"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="section-number">2</span>Preguntas para entrenar al asistente</div>
+    <div class="card-sub">Escribí la respuesta real que te da el cliente en cada una.</div>
+    <div id="preguntasContainer"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="section-number">3</span>Cómo va a ser el proceso</div>
+    <div class="card-sub">Plan de ejecución que se le comunica al cliente (máximo 3 semanas).</div>
+    <div class="plan-item"><b>Semana 1</b>Conectamos tus cuentas y accesos, armamos la base del sistema.</div>
+    <div class="plan-item"><b>Semana 2</b>Tu asistente ya está respondiendo y agendando solo.</div>
+    <div class="plan-item"><b>Semana 3</b>Ajustamos con los primeros datos reales de tu negocio — todo listo y funcionando.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Notas de la llamada</div>
+    <div class="card-sub">Cualquier detalle extra que no entre en las preguntas de arriba.</div>
+    <textarea id="notas" style="min-height:100px;" placeholder="Notas libres..."></textarea>
+  </div>
+
+  <button class="print-btn" onclick="window.print()">Guardar / Imprimir esta página</button>
+  <div class="note" style="margin-top:14px;max-width:640px;text-align:center;">
+    Este archivo todavía no crea el cliente ni dispara la automatización automáticamente —
+    por ahora es solo para llenar y guardar en vivo durante la llamada.
+  </div>
+
+<script>
+const preguntasPorPaquete = [
+  [],
+  ['¿Cuáles son tus servicios y precios exactos?','¿Cuánto dura típicamente cada servicio?','¿Cuál es tu horario de atención?','¿Cuántas personas atienden citas / cuántas agendas manejás?','¿Cuál es tu política de cancelación o no-show?','¿Qué preguntas frecuentes te hacen antes de agendar?'],
+  ['¿Cuáles son tus servicios/productos y precios exactos?','¿En qué plataforma vendés hoy?','¿A qué zonas hacés envío/delivery?','¿Cuáles son tus tiempos de entrega?','¿Qué métodos de pago aceptás?','¿Cuál es tu política de cambios o devoluciones?'],
+  ['¿Cuáles son tus servicios/productos y precios exactos?','¿Qué preguntas usás para calificar si un lead es bueno?','¿Cuánto dura tu proceso de venta desde el primer contacto?'],
+  ['Contanos en detalle qué querés automatizar de tu negocio, paso a paso.']
+];
+
+const accesosPorPaquete = [
+  ['WhatsApp Business (número a conectar)'],
+  ['WhatsApp Business (número a conectar)','Google Calendar (correo de la cuenta a usar)','Instagram/Facebook (si vas a sumar Integración Meta)'],
+  ['WhatsApp Business (número a conectar)','Instagram/Facebook (si vas a sumar Integración Meta)'],
+  ['WhatsApp Business (número a conectar)','Google Calendar (correo de la cuenta a usar)','Instagram/Facebook (si vas a sumar Integración Meta)'],
+  ['WhatsApp Business (número a conectar)']
+];
+
+const chips = document.querySelectorAll('.chip');
+const accesosContainer = document.getElementById('accesosContainer');
+const preguntasContainer = document.getElementById('preguntasContainer');
+
+function render(paqueteIdx) {
+  accesosContainer.innerHTML = accesosPorPaquete[paqueteIdx].map((a, i) => `
+    <div class="acceso-item">
+      <input type="checkbox" id="acceso_${i}">
+      <label for="acceso_${i}">${a}</label>
+    </div>
+  `).join('');
+
+  const preguntas = preguntasPorPaquete[paqueteIdx];
+  preguntasContainer.innerHTML = preguntas.length ? preguntas.map((p, i) => `
+    <div class="pregunta-block">
+      <div class="pregunta-texto">${p}</div>
+      <textarea id="pregunta_${i}" placeholder="Respuesta del cliente..."></textarea>
+    </div>
+  `).join('') : '<div class="note">Este paquete no tiene preguntas específicas.</div>';
+}
+
+chips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    chips.forEach(c => c.classList.remove('selected'));
+    chip.classList.add('selected');
+    render(parseInt(chip.dataset.paquete, 10));
+  });
+});
+
+chips[0].classList.add('selected');
+render(0);
+</script>
+
+</body>
+</html>
