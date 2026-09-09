@@ -67,6 +67,9 @@
   .acceso-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--rosa);flex-shrink:0;}
   .acceso-item label{margin:0;font-size:13px;font-weight:500;color:var(--rosa-dark);cursor:pointer;}
   .acceso-obs{width:100%;margin-top:8px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:12.5px;font-family:var(--sans);background:var(--white);}
+  .meta-note{background:var(--bg);border:1px dashed var(--gold);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:12.5px;color:var(--text);line-height:1.5;}
+  .meta-note b{color:var(--rosa-dark);}
+  .meta-note input[type="text"]{width:100%;margin-top:8px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:12.5px;font-family:var(--sans);background:var(--white);}
   .pregunta-block{margin-bottom:16px;}
   .pregunta-texto{font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:6px;}
   .plan-item{background:var(--bg);border-left:3px solid var(--gold);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:13px;}
@@ -144,13 +147,19 @@ const preguntasPorPaquete = [
   ['Contanos en detalle qué querés automatizar de tu negocio, paso a paso.']
 ];
 
+// Orden lógico: 1) canal (WhatsApp), 2) agenda (Calendar, si aplica),
+// 3) Meta agrupado bajo un solo acceso de socio (cubre Página + Cuenta
+// Publicitaria + Catálogo en un paso), 4) web/portafolio como pregunta aparte.
 const accesosPorPaquete = [
   ['WhatsApp Business (número a conectar)'],
-  ['WhatsApp Business (número a conectar)','Google Calendar (correo de la cuenta a usar)','Instagram/Facebook (si vas a sumar Integración Meta)'],
-  ['WhatsApp Business (número a conectar)','Instagram/Facebook (si vas a sumar Integración Meta)'],
-  ['WhatsApp Business (número a conectar)','Google Calendar (correo de la cuenta a usar)','Instagram/Facebook (si vas a sumar Integración Meta)'],
+  ['WhatsApp Business (número a conectar)','Google Calendar (correo de la cuenta a usar)','Meta — acceso de socio en Business Manager dado','Página de Facebook (incluida en el acceso de socio)','Cuenta Publicitaria / Ad Account (incluida en el acceso de socio)','Catálogo de productos (si va a haber pauta de catálogo)','Página web o portafolio (o definir qué se usa como destino)'],
+  ['WhatsApp Business (número a conectar)','Meta — acceso de socio en Business Manager dado','Página de Facebook (incluida en el acceso de socio)','Cuenta Publicitaria / Ad Account (incluida en el acceso de socio)','Catálogo de productos (si va a haber pauta de catálogo)','Página web o portafolio (o definir qué se usa como destino)'],
+  ['WhatsApp Business (número a conectar)','Google Calendar (correo de la cuenta a usar)','Meta — acceso de socio en Business Manager dado','Página de Facebook (incluida en el acceso de socio)','Cuenta Publicitaria / Ad Account (incluida en el acceso de socio)','Catálogo de productos (si va a haber pauta de catálogo)','Página web o portafolio (o definir qué se usa como destino)'],
   ['WhatsApp Business (número a conectar)']
 ];
+
+// Paquetes que pueden sumar Meta (1, 2, 3) muestran la nota de cómo pedir el acceso.
+const paquetesConMeta = [1, 2, 3];
 
 const nombresPaquete = ['Posicionamiento', 'Paquete A — Captación', 'Paquete B — Conversión', 'Paquete C — Crecimiento', 'Personalizado'];
 const paqueteActual = document.getElementById('paqueteActual');
@@ -158,7 +167,19 @@ const accesosContainer = document.getElementById('accesosContainer');
 const preguntasContainer = document.getElementById('preguntasContainer');
 
 function render(paqueteIdx) {
-  accesosContainer.innerHTML = accesosPorPaquete[paqueteIdx].map((a, i) => `
+  const notaMeta = paquetesConMeta.includes(paqueteIdx) ? `
+    <div class="meta-note">
+      <b>Cómo pedir los accesos de Meta:</b> pedile al cliente que entre a
+      business.facebook.com → Configuración del negocio → Socios →
+      "Dale acceso a un socio", y que pegue tu ID de Business Manager.
+      Eso le da acceso a la Página, la Cuenta Publicitaria y el Catálogo
+      en un solo paso — no hace falta pedirlos por separado. Si el cliente
+      no es técnico, compartí pantalla y hacelo vos guiándolo.
+      <input type="text" id="businessManagerId" placeholder="Tu ID de Business Manager (se guarda solo en este navegador)">
+    </div>
+  ` : '';
+
+  accesosContainer.innerHTML = notaMeta + accesosPorPaquete[paqueteIdx].map((a, i) => `
     <div class="acceso-item">
       <div class="acceso-check">
         <input type="checkbox" id="acceso_${i}">
@@ -175,6 +196,14 @@ function render(paqueteIdx) {
       <textarea id="pregunta_${i}" placeholder="Respuesta del cliente..."></textarea>
     </div>
   `).join('') : '<div class="note">Este paquete no tiene preguntas específicas.</div>';
+
+  const bmInput = document.getElementById('businessManagerId');
+  if (bmInput) {
+    bmInput.value = localStorage.getItem('lecodeone_business_manager_id') || '';
+    bmInput.addEventListener('input', () => {
+      localStorage.setItem('lecodeone_business_manager_id', bmInput.value);
+    });
+  }
 }
 
 const params = new URLSearchParams(window.location.search);
