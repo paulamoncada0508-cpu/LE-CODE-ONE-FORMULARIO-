@@ -191,8 +191,11 @@ chips.forEach(chip => {
   });
 });
 
-chips[0].classList.add('selected');
-render(0);
+const params = new URLSearchParams(window.location.search);
+const paqueteParam = parseInt(params.get('paquete'), 10);
+const paqueteInicial = (paqueteParam >= 0 && paqueteParam <= 4) ? paqueteParam : 0;
+chips[paqueteInicial].classList.add('selected');
+render(paqueteInicial);
 </script>
 
 </body>
