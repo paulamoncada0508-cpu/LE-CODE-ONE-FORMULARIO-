@@ -77,12 +77,23 @@
   .section-number{display:inline-flex;width:22px;height:22px;border-radius:50%;background:var(--rosa-med, var(--rosa));color:white;font-size:12px;font-weight:700;align-items:center;justify-content:center;margin-right:8px;}
   .note{font-size:11.5px;color:var(--muted);margin-top:6px;font-style:italic;}
   .print-btn{
+    background:var(--white);color:var(--rosa-dark);border:1.5px solid var(--rosa-dark);border-radius:12px;
+    padding:14px 24px;font-size:14px;font-weight:700;cursor:pointer;width:100%;max-width:640px;margin-bottom:12px;
+  }
+  .print-btn:hover{background:var(--rosa-light);}
+  .send-btn{
     background:var(--rosa-dark);color:white;border:none;border-radius:12px;
     padding:14px 24px;font-size:14px;font-weight:700;cursor:pointer;width:100%;max-width:640px;
   }
-  .print-btn:hover{background:var(--rosa);}
+  .send-btn:hover{background:var(--rosa);}
+  .send-btn:disabled{opacity:.6;cursor:default;}
+  .send-status{font-size:13px;margin-top:10px;text-align:center;max-width:640px;}
+  .send-status.ok{color:#3a7d44;}
+  .send-status.error{color:#b23b3b;}
+  .cliente-info{font-size:13px;color:var(--rosa-dark);margin-top:6px;}
+  .cliente-info b{display:block;font-size:15px;}
   @media print{
-    .print-btn{display:none;}
+    .print-btn, .send-btn, .send-status{display:none;}
     body{background:white;padding:0;}
     .card{box-shadow:none;}
   }
@@ -93,6 +104,7 @@
   <div class="header">
     <div class="logo">LE CODE ONE</div>
     <div class="logo-sub">Documento A editable — para llenar en vivo durante la llamada</div>
+    <div class="cliente-info" id="clienteInfo"></div>
   </div>
 
   <div class="card">
@@ -133,17 +145,15 @@
   </div>
 
   <button class="print-btn" onclick="window.print()">Guardar / Imprimir esta página</button>
-  <div class="note" style="margin-top:14px;max-width:640px;text-align:center;">
-    Este archivo todavía no crea el cliente ni dispara la automatización automáticamente —
-    por ahora es solo para llenar y guardar en vivo durante la llamada.
-  </div>
+  <button class="send-btn" id="btnEnviar">Enviar y registrar cliente</button>
+  <div class="send-status" id="sendStatus"></div>
 
 <script>
 const preguntasPorPaquete = [
   [],
-  ['¿Cuáles son tus servicios y precios exactos?','¿Cuánto dura típicamente cada servicio?','¿Cuál es tu horario de atención?','¿Cuántas personas atienden citas / cuántas agendas manejás?','¿Cuál es tu política de cancelación o no-show?','¿Qué preguntas frecuentes te hacen antes de agendar?'],
-  ['¿Cuáles son tus servicios/productos y precios exactos?','¿En qué plataforma vendés hoy?','¿A qué zonas hacés envío/delivery?','¿Cuáles son tus tiempos de entrega?','¿Qué métodos de pago aceptás?','¿Cuál es tu política de cambios o devoluciones?'],
-  ['¿Cuáles son tus servicios/productos y precios exactos?','¿Qué preguntas usás para calificar si un lead es bueno?','¿Cuánto dura tu proceso de venta desde el primer contacto?'],
+  ['¿Cuáles son tus servicios y precios exactos?','¿Cuánto dura típicamente cada servicio?','¿Cuál es tu horario de atención?','¿Cuántas personas atienden citas / cuántas agendas manejás?','¿Cuál es tu política de cancelación o no-show?','¿Qué preguntas frecuentes te hacen antes de agendar?','De estas preguntas, ¿hay alguna que quieras que el asistente responda de una forma específica? Danos un ejemplo de cómo la responderías vos.','¿Qué otras preguntas te hacen tus clientes antes de agendar/comprar, que no estén en la lista de arriba?'],
+  ['¿Cuáles son tus servicios/productos y precios exactos?','¿En qué plataforma vendés hoy?','¿A qué zonas hacés envío/delivery?','¿Cuáles son tus tiempos de entrega?','¿Qué métodos de pago aceptás?','¿Cuál es tu política de cambios o devoluciones?','De estas preguntas, ¿hay alguna que quieras que el asistente responda de una forma específica? Danos un ejemplo de cómo la responderías vos.','¿Qué otras preguntas te hacen tus clientes antes de agendar/comprar, que no estén en la lista de arriba?'],
+  ['¿Cuáles son tus servicios/productos y precios exactos?','¿Qué preguntas usás para calificar si un lead es bueno?','¿Cuánto dura tu proceso de venta desde el primer contacto?','De estas preguntas, ¿hay alguna que quieras que el asistente responda de una forma específica? Danos un ejemplo de cómo la responderías vos.','¿Qué otras preguntas te hacen tus clientes antes de agendar/comprar, que no estén en la lista de arriba?'],
   ['Contanos en detalle qué querés automatizar de tu negocio, paso a paso.']
 ];
 
@@ -206,11 +216,84 @@ function render(paqueteIdx) {
   }
 }
 
+const WEBHOOK_URL = 'https://q3uhvgat.rpcld.co/webhook/96f9ce65-6772-4906-b4fb-c1361d91a8dd';
+
 const params = new URLSearchParams(window.location.search);
 const paqueteParam = parseInt(params.get('paquete'), 10);
 const paqueteInicial = (paqueteParam >= 0 && paqueteParam <= 4) ? paqueteParam : 0;
+const datosCliente = {
+  nombre_negocio: params.get('negocio') || '',
+  contacto: params.get('contacto') || '',
+  whatsapp: params.get('whatsapp') || '',
+  email: params.get('email') || '',
+  ciudad: params.get('ciudad') || ''
+};
+
 paqueteActual.textContent = nombresPaquete[paqueteInicial];
 render(paqueteInicial);
+
+const clienteInfo = document.getElementById('clienteInfo');
+if (datosCliente.nombre_negocio) {
+  clienteInfo.innerHTML = `<b>${datosCliente.nombre_negocio}</b>${datosCliente.contacto ? ' — ' + datosCliente.contacto : ''}`;
+} else {
+  clienteInfo.innerHTML = '<span style="color:var(--muted);font-style:italic;">Sin datos de cliente en el link — abrí este documento desde el link real que te llega por email/WhatsApp.</span>';
+}
+
+document.getElementById('btnEnviar').addEventListener('click', enviarDocumentoA);
+
+async function enviarDocumentoA() {
+  const btn = document.getElementById('btnEnviar');
+  const status = document.getElementById('sendStatus');
+  status.className = 'send-status';
+  status.textContent = '';
+
+  if (!datosCliente.nombre_negocio) {
+    status.className = 'send-status error';
+    status.textContent = 'Falta el nombre del negocio en el link — no se puede enviar.';
+    return;
+  }
+
+  const accesos = accesosPorPaquete[paqueteInicial].map((a, i) => ({
+    item: a,
+    confirmado: document.getElementById(`acceso_${i}`).checked,
+    observacion: document.getElementById(`acceso_obs_${i}`).value
+  }));
+
+  const preguntas = preguntasPorPaquete[paqueteInicial].map((p, i) => ({
+    pregunta: p,
+    respuesta: document.getElementById(`pregunta_${i}`).value
+  }));
+
+  const payload = {
+    ...datosCliente,
+    paqueteIdx: paqueteInicial,
+    paquete: nombresPaquete[paqueteInicial],
+    fecha_llamada: document.getElementById('fechaLlamada').value,
+    business_manager_id: localStorage.getItem('lecodeone_business_manager_id') || '',
+    accesos,
+    preguntas,
+    notas: document.getElementById('notas').value
+  };
+
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+  try {
+    const resp = await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    status.className = 'send-status ok';
+    status.textContent = 'Enviado ✅ — cliente registrado.';
+    btn.textContent = 'Enviado ✅';
+  } catch (err) {
+    status.className = 'send-status error';
+    status.textContent = 'Error al enviar: ' + err.message + ' (podés reintentar).';
+    btn.disabled = false;
+    btn.textContent = 'Enviar y registrar cliente';
+  }
+}
 </script>
 
 </body>
